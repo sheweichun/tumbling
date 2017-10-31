@@ -1,7 +1,8 @@
 
 import './index.less';
 // import CanvasNumber from '../../src/index';
-import {DomNumberScroller,Countdown} from '../../src/index';
+import '../../src/index.less';
+import {DomNumberScroller,Countdown,FlipRender,DomRawScroller} from '../../src/index';
 import Chart from 'chart.js';
 import Tween from '../../src/tween';
 
@@ -25,13 +26,6 @@ requestAnimationFrame( animate );
 
 const HEIGHT = 108;
 let value = 348;
-const scroller = new DomNumberScroller('#container',{
-    transitionTime:800,
-    value:value,
-    thousand:true
-})
-scroller.start();
-
 function formatDt(dt,splitStr='/'){
     let hour = dt.getHours();
     hour = hour < 10 ? '0'+hour : hour;
@@ -42,36 +36,66 @@ function formatDt(dt,splitStr='/'){
     return `${hour}${splitStr}${minute}${splitStr}${second}`;
 }
 
-setInterval(()=>{
-    // scroller.transitionTime = 30000;
-    value = [3817319,313][Math.round(Math.random())];
-    // value += Math.random() * 100;
-    if(!window.stopFlag){
-        console.log('value :',value);
-        scroller.update(value)
-    }
-    
-},1200)
 
-const d = new Date();
+// const scroller = new DomNumberScroller('#container',{
+//     transitionTime:800,
+//     value:value,
+//     thousand:true
+// })
+// scroller.start();
 
-const CountdownScroller =  new Countdown('#countdown',{
-    transitionTime:500,
-    // direction:Countdown.MINUS,
-    value:formatDt(d),
-})
-CountdownScroller.start();
 
-setInterval(()=>{
-    d.setSeconds(d.getSeconds()+1);
-    CountdownScroller.update(formatDt(d))
-},1000);
-// setTimeout(()=>{
+
+// setInterval(()=>{
 //     // scroller.transitionTime = 30000;
-//     // value = Math.floor(Math.random() * 100000);
-//     value = 10002
-//     scroller.update(value)
-// },2000)
+//     value = [3817319,313][Math.round(Math.random())];
+//     // value += Math.random() * 100;
+//     if(!window.stopFlag){
+//         // console.log('value :',value);
+//         scroller.update(value)
+//     }
+    
+// },1200)
+
+// const d = new Date();
+
+// const CountdownScroller =  new Countdown('#countdown',{
+//     transitionTime:300,
+//     effect:FlipRender,
+//     // rotateDirection:FlipRender.HORIZONTAL,
+//     direction:Countdown.MINUS,
+//     // tween:'easeOutBounce',
+//     value:formatDt(d),
+// })
+// CountdownScroller.start();
+
+// setInterval(()=>{
+//     // CountdownScroller.transitionTime = 8000;
+//     d.setSeconds(d.getSeconds()-1);
+//     const fmt = formatDt(d);
+//     // console.log('fmt :',fmt);
+//     CountdownScroller.update(fmt)
+// },1000);
+
+
+
+const domRawScroller = new DomRawScroller('#raw',{
+    transitionTime:3000,
+    // stopImmediate:true,
+    value:30,
+    onStop:(value)=>{
+        console.log('onStop :',value);
+    }
+});
+domRawScroller.start();
+
+
+document.getElementById('raw-start-button').addEventListener('click',()=>{
+    domRawScroller.start()
+})
+document.getElementById('raw-stop-button').addEventListener('click',()=>{
+    domRawScroller.stop()
+})
 
 function generateChartData(tweenFn,total,xLen){
     const unit = Math.floor(total / xLen);
@@ -88,7 +112,7 @@ function generateChartData(tweenFn,total,xLen){
 }
 
 const chartData = generateChartData(Tween.linear,300,10);
-console.log('chartData :',chartData);
+// console.log('chartData :',chartData);
 var ctx = document.getElementById("myChart").getContext('2d');
 var myChart = new Chart(ctx, {
     type: 'line',

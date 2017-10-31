@@ -3,30 +3,24 @@ import DomRendable from './domRendable';
 import DomItem from './domItem';
 import {toThousands,NUMBER_REG} from './util';
 
-
+const merge = Object.assign;
 
 
 export default class DomNumber extends DomRendable{
     constructor(selector,options){
         super(selector,options);
-        const{thousand} = options;
+        const{thousand,effect} = options;
         this.thousand = thousand;
+        this.options = options;
         this.generateNumberItems(this.value);
     }
     generateDomItem(isNumber,val,index,maxValue,baseRange,newBornFlag){
-        return DomItem(this,val,{
+        return DomItem(this,val,merge({},this.options,{
             index,
-            parentDom:this.dom,
-            tween:this.tween,
-            renderItem:this.renderItem,
-            appearAnimation:this.appearAnimation,
-            disappearAnimation:this.disappearAnimation,
-            animationFlag:this.animationFlag,
             newBornFlag,
-            transitionTime:this.transitionTime,
             baseRange:baseRange,
             maxValue
-        },isNumber);
+        }),isNumber);
     }
     generateNumberItems(val=''){
         const {valueStr,transformValueStr} = DomNumber.parseValue(val,this.thousand);
@@ -52,63 +46,58 @@ export default class DomNumber extends DomRendable{
         this.dom.appendChild(fragment);
     }
     update(value){
-        if(this.animateId){
-            window.cancelAnimationFrame(this.animateId);
-            this.animateId = null;
-            this.clear();
-            this.render(this.transitionTime,true);
-        }
-        const {valueStr,transformValueStr} = DomNumber.parseValue(value,this.thousand);
-        const itemsLen = this.items.length;
-        const valStrLen = valueStr.length;
-        
-        const diffLen = valStrLen - itemsLen;
-        let newItems;
-        if(diffLen > 0){
-            newItems = [];
-            const fragment = document.createDocumentFragment();
-            const valStrLenMinus1 = valStrLen - 1;
-            let transformIndex = 0,strIndex;
-            for(let i = 0; i < valStrLen; i++){
-                const maxValue = 10;
-                const baseRange = Math.pow(maxValue,valStrLenMinus1 - i);
-                const transformCurVal = transformValueStr[transformIndex];
-                let isNumber = NUMBER_REG.test(transformCurVal);
-                strIndex = (valStrLenMinus1 - transformIndex);
-                if(!isNumber){
-                    if(!this.strItems[strIndex]){
-                        const domItem =  this.generateDomItem(false,transformCurVal,i,maxValue,baseRange,true).mount(fragment);
-                        this.strItems[strIndex] = domItem;
+        this.complete();
+        if(value !== this.value){
+            const {valueStr,transformValueStr} = DomNumber.parseValue(value,this.thousand);
+            const itemsLen = this.items.length;
+            const valStrLen = valueStr.length;
+            
+            const diffLen = valStrLen - itemsLen;
+            let newItems;
+            if(diffLen > 0){
+                newItems = [];
+                const fragment = document.createDocumentFragment();
+                const valStrLenMinus1 = valStrLen - 1;
+                let transformIndex = 0,strIndex;
+                for(let i = 0; i < valStrLen; i++){
+                    const maxValue = 10;
+                    const baseRange = Math.pow(maxValue,valStrLenMinus1 - i);
+                    const transformCurVal = transformValueStr[transformIndex];
+                    let isNumber = NUMBER_REG.test(transformCurVal);
+                    strIndex = (valStrLenMinus1 - transformIndex);
+                    if(!isNumber){
+                        if(!this.strItems[strIndex]){
+                            const domItem =  this.generateDomItem(false,transformCurVal,i,maxValue,baseRange,true).mount(fragment);
+                            this.strItems[strIndex] = domItem;
+                        }
+                        transformIndex++;
                     }
+                    if(i < diffLen){
+                        // console.log('push i');
+                        newItems.push(this.generateDomItem(true,value,i,maxValue,baseRange,true).mount(fragment));
+                    }
+                    
                     transformIndex++;
                 }
-                if(i < diffLen){
-                    // console.log('push i');
-                    newItems.push(this.generateDomItem(true,value,i,maxValue,baseRange,true).mount(fragment));
+                // console.log('newItems :',newItems.length);
+                this.dom.insertBefore(fragment,this.dom.children[0]);
+            }else if(diffLen < 0){
+                for(let i = 0; i < -diffLen; i++){
+                    this.items[i].disappear()
                 }
-                
-                transformIndex++;
-            }
-            // console.log('newItems :',newItems.length);
-            this.dom.insertBefore(fragment,this.dom.children[0]);
-        }else if(diffLen < 0){
-            for(let i = 0; i < -diffLen; i++){
-                this.items[i].disappear()
-            }
-            for(let index in this.strItems){
-                let tmpItem = this.strItems[index];
-                if(NUMBER_REG.test(transformValueStr[index]) || index >= transformValueStr.length){
-                    tmpItem.disappear();
+                for(let index in this.strItems){
+                    let tmpItem = this.strItems[index];
+                    if(NUMBER_REG.test(transformValueStr[index]) || index >= transformValueStr.length){
+                        tmpItem.disappear();
+                    }
                 }
             }
-        }
-        this.items.forEach((item)=>{
-            item.update(value)
-        });
-        if(newItems){
-            this.items = newItems.concat(this.items);
-        }
-        if(value !== this.value){
+            this.items.forEach((item)=>{
+                item.update(value)
+            });
+            if(newItems){
+                this.items = newItems.concat(this.items);
+            }
             this.animateId = window.requestAnimationFrame(this.animate)
             this.value = value;
         }

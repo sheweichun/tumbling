@@ -16,4 +16,16 @@ export function toThousands(num) {
   return numStr.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
 }
 
+export function setTransformStyle(el,style){
+  el.style.transform = style;
+  el.style.webkitTransform = style;
+  el.style.mozTransform = style;
+  el.style.msTransform = style;
+  el.style.oTransform = style;
+}
+
+export function setTransformByStyle(el,style){
+  return `transform:${style};webkit-transform:${style};moz-transform:${style};ms-transform:${style};o-transform:${style}`
+}
+
 export const NUMBER_REG = new RegExp("[0-9]")

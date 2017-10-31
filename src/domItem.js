@@ -5,19 +5,37 @@ const NO_NUMBER_TYPE = 1;
 const NUMBER_REG = new RegExp("[0-9]")
 
 
+const CLASSNAME_PREFIX = 'tumbling-wrapper';
+
 export class BaseItem{
     constructor(context,value,options){
+        const{effect,appearAnimation,disappearAnimation,animationFlag,dom,renderItem,tween} = context;
         this.context = context;
         this.value = value;
+        this.index = options.index;
+        this.rawMode = options.rawMode || false;
+        this.rawDirection = options.rawDirection || 1;
         this.visible = false;
         this.wrapper = null;
+        this.effectController = new effect(this,options);
         this.moveRatio = 1;
-        this.animationFlag = options.animationFlag || true;
-        this.parentDom = options.parentDom;
+        this.animationFlag = animationFlag || true;
+        this.parentDom = dom;
+        this.renderItem = renderItem;
+        this.tween = BaseItem.parseTween(tween);;
         this.newBornFlag = options.newBornFlag || false;
-        this.appearAnimation = options.appearAnimation;
-        this.disappearAnimation = options.disappearAnimation;
+        this.appearAnimation = appearAnimation;
+        this.disappearAnimation = disappearAnimation;
         this.disappearFlag = false;
+    }
+    static parseTween(tween){
+        if(!tween){
+            return Tween.linear;
+        }
+        if(typeof tween === 'function'){
+            return tween
+        }
+        return Tween[tween];
     }
     getWrapperWidth(){
         if(!this.wrapperWidth){
@@ -31,8 +49,7 @@ export class BaseItem{
     }
     animateRender(){
         if(!this.visible){
-            this.wrapper.style.position = 'relative';
-            this.wrapper.style.visibility = 'visible';
+            this.wrapper.className += ` ${CLASSNAME_PREFIX}-visible`;
             this.visible = true;
             this.getWrapperWidth();
         }
@@ -60,49 +77,20 @@ class NumberItem extends BaseItem{
     constructor(context,value,options){
         super(context,value,options);
         this.value = 0;
-        this.index = options.index;
-        this.parentDom = options.parentDom;
+        this.isNumber = true;
         this.baseRange = options.baseRange;
-        this.tween = NumberItem.parseTween(options.tween);
         this.diffDistance = 0;
         this.maxValue = options.maxValue || 10;
         this.moveY = 0;
-        this.renderItem = options.renderItem;
         this.showCurValue = 0;
-        this.showPrevValue = this.add(this.showCurValue,-1);
-        this.showNextValue = this.add(this.showCurValue,1);
         this.update(value);
-    }
-    static parseTween(tween){
-        if(!tween){
-            return Tween.linear;
-        }
-        if(typeof tween === 'function'){
-            return tween
-        }
-        return Tween[tween];
     }
     mount(dom){
         let wrapper = document.createElement('div');
-        let scroller = document.createElement('ul');
-        wrapper.style.display = 'inline-block';
-        wrapper.style.position = 'absolute';
-        wrapper.style.overflow = 'hidden';
-        wrapper.style.verticalAlign = 'top';
-        wrapper.style.visibility = 'hidden';
-        wrapper.innerHTML = `
-            <span style="visibility:hidden;">${this.renderItem ? this.renderItem(9) : 9}</span>
-            <ul style="position:absolute;top:0;margin:0;padding:0;left:0;list-style:none;text-align: center;width:100%;">
-                <li>${this.showCurValue}</li>
-                <li></li>
-            </ul>
-        `;
-        dom.appendChild(wrapper);
+        this.effectController.mount(wrapper);
         this.wrapper = wrapper;
-        this.wrapper.visible = false;
-        this.scroller = wrapper.children[wrapper.children.length - 1];
-        this.firstLi = this.scroller.children[0];
-        this.secondLi = this.scroller.children[1];
+        this.visible = false;
+        dom.appendChild(wrapper);
         return this;
     }
     static floor(val){
@@ -112,11 +100,23 @@ class NumberItem extends BaseItem{
         return Math.floor(val);
     }
     update(value=0){
-        const dividedValue = NumberItem.floor(value / this.baseRange);
-        let diff = dividedValue - this.value;
-        this.diffDistance = diff;
-        this.value = dividedValue;
-        this.originCurValue = this.showCurValue ;
+        if(this.rawMode){
+            this.showPrevValue = this.showNextValue = value;
+            if(value === this.value){
+                this.diffDistance = 0;
+                return;
+            }
+            this.diffDistance = this.rawDirection;
+            this.value = value;
+        }else{
+            const dividedValue = NumberItem.floor(value / this.baseRange);
+            let diff = dividedValue - this.value;
+            this.diffDistance = diff;
+            this.value = dividedValue;
+            this.showPrevValue = this.add(this.showCurValue,-1);
+            this.showNextValue = this.add(this.showCurValue,1);
+            this.originCurValue = this.showCurValue ;
+        }
     }
     processNumber(value,diff){
         let ret = NumberItem.floor((value + diff) % this.maxValue);
@@ -140,6 +140,12 @@ class NumberItem extends BaseItem{
         this.showPrevValue = this.add(this.showCurValue,-1);
         this.showNextValue = this.add(this.showCurValue,1);
     }
+    updateRawValue(changeY){
+        if(changeY === 1 || changeY === -1){
+            this.showCurValue = this.showPrevValue;
+            this.showPrevValue = this.showNextValue = this.showCurValue;
+        }
+    }
     move(tm,stopFlag){
         let distance;
         const {transitionTime} = this.context;
@@ -158,7 +164,11 @@ class NumberItem extends BaseItem{
         // this.moveRatio = (this.diffDistance - Tween.linear(tm,0,this.diffDistance,transitionTime)) / this.diffDistance;
         this.moveRatio = (transitionTime - tm) / transitionTime;
         this.moveY = distance;
-        this.updateValue(distance);
+        if(this.rawMode){
+            this.updateRawValue(distance);
+        }else{
+            this.updateValue(distance);
+        }
     }
     remove(){
         if(this.parentDom && this.wrapper){
@@ -166,38 +176,12 @@ class NumberItem extends BaseItem{
             this.wrapper = null;
         }
     }
-    static renderText(el,content){
-        let html = '';
-        if(content != null && content >= 0){
-            html =  content+''
-        }
-        if(this.renderItem){
-            html = this.renderItem(html);
-        }
-        el.innerHTML = html
-    } 
-    static setTransformStyle(el,style){
-        el.style.transform = style;
-        el.style.webkitTransform = style;
-        el.style.mozTransform = style;
-        el.style.msTransform = style;
-        el.style.oTransform = style;
-    }
     render(){
         const{diffDistance} = this;
+        if(diffDistance === 0) return;
         let changeY = this.moveY % 1;
         this.animateRender();
-        if(diffDistance > 0){
-            changeY = (changeY - 1) ;
-            NumberItem.renderText(this.firstLi,this.showNextValue);
-            NumberItem.renderText(this.secondLi,this.showCurValue);
-        }else if(diffDistance === 0){
-            NumberItem.renderText(this.firstLi,this.showCurValue);
-        }else{
-            NumberItem.renderText(this.firstLi,this.showCurValue);
-            NumberItem.renderText(this.secondLi,this.showPrevValue);
-        }
-        NumberItem.setTransformStyle(this.scroller,`translateY(${changeY * 50}%)`);
+        this.effectController.render(diffDistance,changeY)
     }
 }
 
@@ -207,10 +191,7 @@ class NoNumberItem extends BaseItem{
     }
     mount(dom){
         let wrapper = document.createElement('div');
-        wrapper.style.display = 'inline-block';
-        wrapper.style.position = 'absolute';
-        wrapper.style.verticalAlign = 'top';
-        // wrapper.style.visibility = 'hidden';
+        wrapper.className = CLASSNAME_PREFIX;
         wrapper.innerHTML = this.value;
         this.wrapper = wrapper;
         dom.appendChild(wrapper);

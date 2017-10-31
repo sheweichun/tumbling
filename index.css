@@ -1,0 +1,33 @@
+.tumbling-wrapper {
+  display: inline-block;
+  position: absolute;
+  overflow: hidden;
+  vertical-align: top;
+  visibility: hidden;
+}
+.tumbling-wrapper .tumbling-scroller {
+  position: absolute;
+  top: 0;
+  margin: 0;
+  padding: 0;
+  left: 0;
+  list-style: none;
+  text-align: center;
+  width: 100%;
+  height: 100%;
+}
+.tumbling-wrapper .tumbling-hidden-span {
+  visibility: hidden;
+}
+.tumbling-wrapper.tumbling-wrapper-visible {
+  position: relative;
+  visibility: visible;
+}
+.tumblingFlip-wrapper .tumbling-scroller > li {
+  backface-visibility: hidden;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}

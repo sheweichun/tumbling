@@ -3,21 +3,14 @@
 import DomRendable from './domRendable';
 import DomItem from './domItem';
 import {NUMBER_REG} from './util';
-
+const merge = Object.assign;
 
 class Countdown extends DomRendable{
     static ADD = 0
     static MINUS = 1
     constructor(selector,options){
         super(selector,options);
-        this.format = [
-            3,
-            4,
-            6,
-            10,
-            6,
-            10
-        ]
+        this.options = options;
         this.direction = options.direction ||  Countdown.ADD;
         this.init(this.value);
     }
@@ -27,18 +20,12 @@ class Countdown extends DomRendable{
         let numberIndex = 0;
         this.items = valStrArr.map((val,index)=>{
             const isNumber = NUMBER_REG.test(val);
-            const item = DomItem(this,val,{
+            const itemValue = isNumber ? parseInt(val) : val;
+            const item = DomItem(this,itemValue,merge({},this.options,{
                 index,
-                parentDom:this.dom,
-                tween:this.tween,
-                renderItem:this.renderItem,
-                appearAnimation:this.appearAnimation,
-                disappearAnimation:this.disappearAnimation,
-                animationFlag:this.animationFlag,
-                transitionTime:this.transitionTime,
-                baseRange:1,
-                maxValue:parseInt(this.format[numberIndex])
-            },isNumber);
+                rawDirection:this.direction === Countdown.ADD ? 1 : -1,
+                rawMode:true
+            }),isNumber);
             if(isNumber){
                 numberIndex++;
             }
@@ -52,21 +39,15 @@ class Countdown extends DomRendable{
             this.animateId = null;
             this.render(this.transitionTime,true);
         }
-        const valStrArr = (value+'').split('');
-        valStrArr.forEach((val,index)=>{
-            let updateVal = val;
-            const curItem = this.items[index];
-            if(this.direction === Countdown.ADD && updateVal < curItem.value){
-                updateVal += curItem.maxValue;
-            }
-            else if(this.direction === Countdown.MINUS && updateVal > curItem.value){
-                updateVal -= curItem.maxValue;
-            }
-            
-            curItem.update(updateVal);
-            curItem.value = curItem.value % curItem.maxValue;
-        })
         if(value !== this.value){
+            const valStrArr = (value+'').split('');
+            valStrArr.forEach((val,index)=>{
+                const curItem = this.items[index];
+                if(curItem.isNumber){
+                    let updateVal = parseInt(val);
+                    curItem.update(updateVal);
+                }
+            })
             this.animateId = window.requestAnimationFrame(this.animate)
             this.value = value;
         }
