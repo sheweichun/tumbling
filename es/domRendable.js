@@ -2,6 +2,7 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+import Tween from './tween';
 var merge = Object.assign;
 var DEFAULT_OPTIONS = {
     // transitionTime:300
@@ -13,7 +14,8 @@ var DomRendable = function () {
         _classCallCheck(this, DomRendable);
 
         var mergeOptions = merge({}, DEFAULT_OPTIONS, options);
-        this.dom = document.querySelector(selector);
+        var _this = this;
+        _this.dom = DomRendable.parseDom(selector);
         var renderItem = mergeOptions.renderItem,
             animationRender = mergeOptions.animationRender,
             appearAnimation = mergeOptions.appearAnimation,
@@ -22,60 +24,67 @@ var DomRendable = function () {
             tween = mergeOptions.tween,
             effect = mergeOptions.effect;
 
-        this.animateTimeStamp = null;
-        this.animateId = null;
-        this.effect = effect || TumblingRender;
-        this.value = options.value;
-        this.startedFlag = false;
-        this.transitionTime = options.transitionTime || 300;
-        this.renderItem = renderItem;
-        this.appearAnimation = appearAnimation;
-        this.animationRender = animationRender;
-        this.tween = tween;
-        this.disappearAnimation = disappearAnimation;
-        this.animationFlag = animationFlag;
-        this.animate = this.animate.bind(this);
+        _this.animateTimeStamp = null;
+        _this.animateId = null;
+        _this.effect = effect || TumblingRender;
+        _this.value = options.value;
+        _this.startedFlag = false;
+        _this.transitionTime = options.transitionTime || 300;
+        _this.renderItem = renderItem;
+        _this.tween = DomRendable.parseTween(tween);
+        _this.appearAnimation = appearAnimation;
+        _this.animationRender = animationRender;
+        _this.disappearAnimation = disappearAnimation;
+        _this.animationFlag = animationFlag;
+        _this.animate = _this.animate.bind(_this);
     }
 
     _createClass(DomRendable, [{
+        key: 'changeTween',
+        value: function changeTween(tween) {
+            this.tween = DomRendable.parseTween(tween);
+        }
+    }, {
         key: 'clear',
         value: function clear() {}
     }, {
         key: 'animate',
         value: function animate(tm) {
-            if (this.animateTimeStamp == null) {
-                this.animateTimeStamp = tm;
-                window.requestAnimationFrame(this.animate);
+            var _this = this;
+            if (_this.animateTimeStamp == null) {
+                _this.animateTimeStamp = tm;
+                window.requestAnimationFrame(_this.animate);
                 return;
             }
-            var diff = tm - this.animateTimeStamp;
+            var diff = tm - _this.animateTimeStamp;
             var stopFlag = false;
-            if (diff >= this.transitionTime) {
+            if (diff >= _this.transitionTime) {
                 stopFlag = true;
-                diff = this.transitionTime;
-                this.animateTimeStamp = null;
-                this.clear();
+                diff = _this.transitionTime;
+                _this.animateTimeStamp = null;
+                _this.clear();
             }
             /**
              * 
              */
-            this.render(diff, stopFlag);
+            _this.render(diff, stopFlag);
 
             if (stopFlag) {
-                this.animateStop && this.animateStop(tm);
-                this.animateId = null;
+                _this.animateStop && _this.animateStop(tm);
+                _this.animateId = null;
                 return;
             }
-            this.animateId = window.requestAnimationFrame(this.animate);
+            _this.animateId = window.requestAnimationFrame(_this.animate);
         }
     }, {
         key: 'complete',
         value: function complete() {
-            if (this.animateId) {
-                window.cancelAnimationFrame(this.animateId);
-                this.animateId = null;
-                this.clear();
-                this.render(this.transitionTime, true);
+            var _this = this;
+            if (_this.animateId) {
+                window.cancelAnimationFrame(_this.animateId);
+                _this.animateId = null;
+                _this.clear();
+                _this.render(_this.transitionTime, true);
             }
         }
     }, {
@@ -84,16 +93,40 @@ var DomRendable = function () {
     }, {
         key: 'start',
         value: function start() {
-            this.beforeStart && this.beforeStart();
-            if (!this.startedFlag) {
-                this.startedFlag = true;
-            } else {
-                this.complete();
+            var _this = this;
+            if (_this.animateId) {
+                return;
             }
-            if (this.value) {
+            _this.beforeStart && _this.beforeStart();
+            // if(!_this.startedFlag){
+            //     _this.startedFlag = true
+            // }else{
+            //     _this.complete();
+            //     _this.afterStartComplete && _this.afterStartComplete();
+            // }
+            if (_this.value) {
                 // console.log('request');
-                this.animateId = window.requestAnimationFrame(this.animate);
+                _this.animateId = window.requestAnimationFrame(_this.animate);
             }
+        }
+    }], [{
+        key: 'parseDom',
+        value: function parseDom(selector) {
+            if (typeof selector === 'string') {
+                return document.querySelector(selector);
+            }
+            return selector;
+        }
+    }, {
+        key: 'parseTween',
+        value: function parseTween(tween) {
+            if (!tween) {
+                return Tween.linear;
+            }
+            if (typeof tween === 'function') {
+                return tween;
+            }
+            return Tween[tween];
         }
     }]);
 

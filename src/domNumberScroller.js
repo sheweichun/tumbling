@@ -10,12 +10,14 @@ export default class DomNumber extends DomRendable{
     constructor(selector,options){
         super(selector,options);
         const{thousand,effect} = options;
-        this.thousand = thousand;
-        this.options = options;
-        this.generateNumberItems(this.value);
+        const _this = this;
+        _this.thousand = thousand;
+        _this.options = options;
+        _this.generateNumberItems(_this.value);
     }
     generateDomItem(isNumber,val,index,maxValue,baseRange,newBornFlag){
-        return DomItem(this,val,merge({},this.options,{
+        const _this = this;
+        return DomItem(_this,val,merge({},_this.options,{
             index,
             newBornFlag,
             baseRange:baseRange,
@@ -23,10 +25,11 @@ export default class DomNumber extends DomRendable{
         }),isNumber);
     }
     generateNumberItems(val=''){
-        const {valueStr,transformValueStr} = DomNumber.parseValue(val,this.thousand);
+        const _this = this;
+        const {valueStr,transformValueStr} = DomNumber.parseValue(val,_this.thousand);
         const valStrLenMinus1 = valueStr.length - 1;
         const fragment = document.createDocumentFragment();
-        this.strItems = {};
+        _this.strItems = {};
         let transformIndex = 0,domItems = [];
         valueStr.forEach((value,index)=>{
             const maxValue = 10;
@@ -34,22 +37,23 @@ export default class DomNumber extends DomRendable{
             const transformCurVal = transformValueStr[transformIndex];
             let isNumber = NUMBER_REG.test(transformCurVal);
             if(!isNumber){
-                const domItem = this.generateDomItem(false,transformCurVal,index,maxValue,baseRange).mount(fragment);
-                this.strItems[(valStrLenMinus1 - transformIndex)] = domItem;
+                const domItem = _this.generateDomItem(false,transformCurVal,index,maxValue,baseRange).mount(fragment);
+                _this.strItems[(valStrLenMinus1 - transformIndex)] = domItem;
                 // domItems.push(domItem);
                 transformIndex++;
             }
             transformIndex++;
-            domItems.push(this.generateDomItem(true,val,index,maxValue,baseRange).mount(fragment));
+            domItems.push(_this.generateDomItem(true,val,index,maxValue,baseRange).mount(fragment));
         })
-        this.items = domItems;
-        this.dom.appendChild(fragment);
+        _this.items = domItems;
+        _this.dom.appendChild(fragment);
     }
     update(value){
-        this.complete();
-        if(value !== this.value){
-            const {valueStr,transformValueStr} = DomNumber.parseValue(value,this.thousand);
-            const itemsLen = this.items.length;
+        const _this = this;
+        _this.complete();
+        if(value !== _this.value){
+            const {valueStr,transformValueStr} = DomNumber.parseValue(value,_this.thousand);
+            const itemsLen = _this.items.length;
             const valStrLen = valueStr.length;
             
             const diffLen = valStrLen - itemsLen;
@@ -66,54 +70,55 @@ export default class DomNumber extends DomRendable{
                     let isNumber = NUMBER_REG.test(transformCurVal);
                     strIndex = (valStrLenMinus1 - transformIndex);
                     if(!isNumber){
-                        if(!this.strItems[strIndex]){
-                            const domItem =  this.generateDomItem(false,transformCurVal,i,maxValue,baseRange,true).mount(fragment);
-                            this.strItems[strIndex] = domItem;
+                        if(!_this.strItems[strIndex]){
+                            const domItem =  _this.generateDomItem(false,transformCurVal,i,maxValue,baseRange,true).mount(fragment);
+                            _this.strItems[strIndex] = domItem;
                         }
                         transformIndex++;
                     }
                     if(i < diffLen){
                         // console.log('push i');
-                        newItems.push(this.generateDomItem(true,value,i,maxValue,baseRange,true).mount(fragment));
+                        newItems.push(_this.generateDomItem(true,value,i,maxValue,baseRange,true).mount(fragment));
                     }
                     
                     transformIndex++;
                 }
                 // console.log('newItems :',newItems.length);
-                this.dom.insertBefore(fragment,this.dom.children[0]);
+                _this.dom.insertBefore(fragment,_this.dom.children[0]);
             }else if(diffLen < 0){
                 for(let i = 0; i < -diffLen; i++){
-                    this.items[i].disappear()
+                    _this.items[i].disappear()
                 }
-                for(let index in this.strItems){
-                    let tmpItem = this.strItems[index];
+                for(let index in _this.strItems){
+                    let tmpItem = _this.strItems[index];
                     if(NUMBER_REG.test(transformValueStr[index]) || index >= transformValueStr.length){
                         tmpItem.disappear();
                     }
                 }
             }
-            this.items.forEach((item)=>{
+            _this.items.forEach((item)=>{
                 item.update(value)
             });
             if(newItems){
-                this.items = newItems.concat(this.items);
+                _this.items = newItems.concat(_this.items);
             }
-            this.animateId = window.requestAnimationFrame(this.animate)
-            this.value = value;
+            _this.animateId = window.requestAnimationFrame(_this.animate)
+            _this.value = value;
         }
     }
     clear(){
-        this.items = this.items.filter((item)=>{
+        const _this = this;
+        _this.items = _this.items.filter((item)=>{
             if(item.disappearFlag){
                 item.remove();
             }
             return !item.disappearFlag
         })
-        for(let index in this.strItems){
-            let curItem = this.strItems[index];
+        for(let index in _this.strItems){
+            let curItem = _this.strItems[index];
             if(curItem.disappearFlag){
                 curItem.remove();
-                delete this.strItems[index];
+                delete _this.strItems[index];
             }
             
         }
@@ -130,14 +135,15 @@ export default class DomNumber extends DomRendable{
         }
     }
     render(tm,flag){
-        this.items.forEach((item,index)=>{
+        const _this = this;
+        _this.items.forEach((item,index)=>{
             if(tm){
                 item.move(tm,flag);
             }
             item.render();
         });
-        for(let index in this.strItems){
-            let curItem = this.strItems[index];
+        for(let index in _this.strItems){
+            let curItem = _this.strItems[index];
             curItem.move(tm,flag);
             curItem.render();
         }

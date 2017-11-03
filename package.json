@@ -10,6 +10,7 @@
   "dependencies": {},
   "devDependencies": {
     "babel-core": "^6.26.0",
+    "babel-plugin-inferno": "^3.3.0",
     "babel-plugin-next": "^0.0.4",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
     "babel-preset-es2015": "^6.24.1",
@@ -24,8 +25,11 @@
     "gulp-less": "^3.3.2",
     "gulp-plumber": "^1.1.0",
     "gulp-sequence": "^0.4.6",
+    "inferno": "^3.10.1",
+    "inferno-component": "^3.10.1",
     "rollup": "^0.50.0",
     "rollup-plugin-commonjs": "^8.2.6",
+    "rollup-plugin-manglejs": "^0.0.4",
     "rollup-plugin-node-resolve": "^3.0.0",
     "rollup-plugin-uglify": "^2.0.1"
   },

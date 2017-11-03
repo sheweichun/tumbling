@@ -6,7 +6,6 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-import Tween from './tween';
 var NUMBER_TYPE = 0;
 var NO_NUMBER_TYPE = 1;
 var NUMBER_REG = new RegExp("[0-9]");
@@ -25,33 +24,44 @@ export var BaseItem = function () {
             renderItem = context.renderItem,
             tween = context.tween;
 
-        this.context = context;
-        this.value = value;
-        this.index = options.index;
-        this.rawMode = options.rawMode || false;
-        this.rawDirection = options.rawDirection || 1;
-        this.visible = false;
-        this.wrapper = null;
-        this.effectController = new effect(this, options);
-        this.moveRatio = 1;
-        this.animationFlag = animationFlag || true;
-        this.parentDom = dom;
-        this.renderItem = renderItem;
-        this.tween = BaseItem.parseTween(tween);;
-        this.newBornFlag = options.newBornFlag || false;
-        this.appearAnimation = appearAnimation;
-        this.disappearAnimation = disappearAnimation;
-        this.disappearFlag = false;
+        var _this = this;
+        _this.context = context;
+        _this.value = value;
+        _this.index = options.index;
+        _this.rawMode = options.rawMode || false;
+        _this.rawDirection = options.rawDirection || 1;
+        _this.visible = false;
+        _this.wrapper = null;
+        _this.hasRender = false;
+        _this.effectController = new effect(_this, options);
+        _this.moveRatio = 1;
+        _this.animationFlag = animationFlag || true;
+        _this.parentDom = dom;
+        _this.renderItem = renderItem;
+        _this.newBornFlag = options.newBornFlag || false;
+        _this.appearAnimation = appearAnimation;
+        _this.disappearAnimation = disappearAnimation;
+        _this.disappearFlag = false;
     }
 
     _createClass(BaseItem, [{
+        key: 'remove',
+        value: function remove() {
+            var _this = this;
+            if (_this.parentDom && _this.wrapper) {
+                _this.parentDom.removeChild(_this.wrapper);
+                _this.wrapper = null;
+            }
+        }
+    }, {
         key: 'getWrapperWidth',
         value: function getWrapperWidth() {
-            if (!this.wrapperWidth) {
-                this.wrapperWidth = this.wrapper.offsetWidth;
-                return this.wrapperWidth;
+            var _this = this;
+            if (!_this.wrapperWidth) {
+                _this.wrapperWidth = _this.wrapper.offsetWidth;
+                return _this.wrapperWidth;
             }
-            return this.wrapperWidth;
+            return _this.wrapperWidth;
         }
     }, {
         key: 'disappear',
@@ -61,38 +71,28 @@ export var BaseItem = function () {
     }, {
         key: 'animateRender',
         value: function animateRender() {
-            if (!this.visible) {
-                this.wrapper.className += ' ' + CLASSNAME_PREFIX + '-visible';
-                this.visible = true;
-                this.getWrapperWidth();
+            var _this = this;
+            if (!_this.visible) {
+                _this.wrapper.className += ' ' + CLASSNAME_PREFIX + '-visible';
+                _this.visible = true;
+                _this.getWrapperWidth();
             }
-            if (this.disappearFlag) {
-                if (this.disappearAnimation) {
-                    this.disappearAnimation(this.wrapper, this.moveRatio);
+            if (_this.disappearFlag) {
+                if (_this.disappearAnimation) {
+                    _this.disappearAnimation(_this.wrapper, _this.moveRatio);
                 } else if (this.animationFlag) {
-                    this.wrapper.style.width = this.wrapperWidth * this.moveRatio + 'px';
-                    this.wrapper.style.opacity = this.moveRatio;
+                    _this.wrapper.style.width = _this.wrapperWidth * _this.moveRatio + 'px';
+                    _this.wrapper.style.opacity = _this.moveRatio;
                 }
-            } else if (this.newBornFlag) {
-                var newRatio = 1 - this.moveRatio;
-                if (this.appearAnimation) {
-                    this.appearAnimation(this.wrapper, newRatio);
+            } else if (_this.newBornFlag) {
+                var newRatio = 1 - _this.moveRatio;
+                if (_this.appearAnimation) {
+                    _this.appearAnimation(_this.wrapper, newRatio);
                 } else if (this.animationFlag) {
-                    this.wrapper.style.width = this.wrapperWidth * newRatio + 'px';
-                    this.wrapper.style.opacity = newRatio;
+                    _this.wrapper.style.width = _this.wrapperWidth * newRatio + 'px';
+                    _this.wrapper.style.opacity = newRatio;
                 }
             }
-        }
-    }], [{
-        key: 'parseTween',
-        value: function parseTween(tween) {
-            if (!tween) {
-                return Tween.linear;
-            }
-            if (typeof tween === 'function') {
-                return tween;
-            }
-            return Tween[tween];
         }
     }]);
 
@@ -105,8 +105,9 @@ var NumberItem = function (_BaseItem) {
     function NumberItem(context, value, options) {
         _classCallCheck(this, NumberItem);
 
-        var _this = _possibleConstructorReturn(this, (NumberItem.__proto__ || Object.getPrototypeOf(NumberItem)).call(this, context, value, options));
+        var _this2 = _possibleConstructorReturn(this, (NumberItem.__proto__ || Object.getPrototypeOf(NumberItem)).call(this, context, value, options));
 
+        var _this = _this2;
         _this.value = 0;
         _this.isNumber = true;
         _this.baseRange = options.baseRange;
@@ -115,122 +116,131 @@ var NumberItem = function (_BaseItem) {
         _this.moveY = 0;
         _this.showCurValue = 0;
         _this.update(value);
-        return _this;
+        return _this2;
     }
 
     _createClass(NumberItem, [{
         key: 'mount',
         value: function mount(dom) {
+            var _this = this;
             var wrapper = document.createElement('div');
-            this.effectController.mount(wrapper);
-            this.wrapper = wrapper;
-            this.visible = false;
+            _this.effectController.mount(wrapper);
+            _this.wrapper = wrapper;
+            _this.visible = false;
             dom.appendChild(wrapper);
-            return this;
+            return _this;
         }
     }, {
         key: 'update',
         value: function update() {
             var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
-            if (this.rawMode) {
-                this.showPrevValue = this.showNextValue = value;
-                if (value === this.value) {
-                    this.diffDistance = 0;
+            var _this = this;
+            if (_this.rawMode) {
+                _this.showPrevValue = _this.showNextValue = value;
+                if (value === _this.value) {
+                    _this.diffDistance = 0;
                     return;
                 }
-                this.diffDistance = this.rawDirection;
-                this.value = value;
+                _this.diffDistance = _this.rawDirection;
+                _this.value = value;
             } else {
-                var dividedValue = NumberItem.floor(value / this.baseRange);
-                var diff = dividedValue - this.value;
-                this.diffDistance = diff;
-                this.value = dividedValue;
-                this.showPrevValue = this.add(this.showCurValue, -1);
-                this.showNextValue = this.add(this.showCurValue, 1);
-                this.originCurValue = this.showCurValue;
+                var dividedValue = NumberItem.floor(value / _this.baseRange);
+                var diff = dividedValue - _this.value;
+                _this.diffDistance = diff;
+                _this.value = dividedValue;
+                _this.showPrevValue = _this.add(_this.showCurValue, -1);
+                _this.showNextValue = _this.add(_this.showCurValue, 1);
+                _this.originCurValue = _this.showCurValue;
             }
         }
     }, {
         key: 'processNumber',
         value: function processNumber(value, diff) {
-            var ret = NumberItem.floor((value + diff) % this.maxValue);
+            var _this = this;
+            var ret = NumberItem.floor((value + diff) % _this.maxValue);
             if (ret < 0) {
-                return this.maxValue + ret;
+                return _this.maxValue + ret;
             }
             return ret;
         }
     }, {
         key: 'add',
         value: function add(value, diff) {
+            var _this = this;
             var fValue = value + diff;
-            if (fValue >= this.maxValue) {
+            if (fValue >= _this.maxValue) {
                 return 0;
             } else if (fValue < 0) {
-                return this.maxValue - 1;
+                return _this.maxValue - 1;
             }
             return fValue;
         }
     }, {
         key: 'updateValue',
         value: function updateValue(changeY) {
+            var _this = this;
             var integerDistance = NumberItem.floor(changeY);
-            this.showCurValue = this.processNumber(this.originCurValue, integerDistance);
-            this.showPrevValue = this.add(this.showCurValue, -1);
-            this.showNextValue = this.add(this.showCurValue, 1);
+            _this.showCurValue = _this.processNumber(_this.originCurValue, integerDistance);
+            _this.showPrevValue = _this.add(_this.showCurValue, -1);
+            _this.showNextValue = _this.add(_this.showCurValue, 1);
         }
     }, {
         key: 'updateRawValue',
         value: function updateRawValue(changeY) {
+            var _this = this;
             if (changeY === 1 || changeY === -1) {
-                this.showCurValue = this.showPrevValue;
-                this.showPrevValue = this.showNextValue = this.showCurValue;
+                _this.showCurValue = _this.showPrevValue;
+                _this.showPrevValue = _this.showNextValue = _this.showCurValue;
             }
         }
     }, {
         key: 'move',
         value: function move(tm, stopFlag) {
+            var _this = this;
             var distance = void 0;
-            var transitionTime = this.context.transitionTime;
+            var transitionTime = _this.context.transitionTime;
 
-            if (stopFlag && this.newBornFlag) {
-                this.newBornFlag = false;
+            if (stopFlag && _this.newBornFlag) {
+                _this.newBornFlag = false;
             }
-            if (this.diffDistance === 0) {
+            if (_this.diffDistance === 0) {
                 return;
             }
             //easeOutElastic linear
             if (tm === transitionTime) {
-                distance = this.diffDistance;
+                distance = _this.diffDistance;
             } else {
-                distance = this.tween(tm, 0, this.diffDistance, transitionTime);
+                distance = _this.context.tween(tm, 0, _this.diffDistance, transitionTime);
             }
             // this.moveRatio = (this.diffDistance - Tween.linear(tm,0,this.diffDistance,transitionTime)) / this.diffDistance;
-            this.moveRatio = (transitionTime - tm) / transitionTime;
-            this.moveY = distance;
-            if (this.rawMode) {
-                this.updateRawValue(distance);
+            _this.moveRatio = (transitionTime - tm) / transitionTime;
+            _this.moveY = distance;
+            if (_this.rawMode) {
+                _this.updateRawValue(distance);
             } else {
-                this.updateValue(distance);
+                _this.updateValue(distance);
             }
         }
-    }, {
-        key: 'remove',
-        value: function remove() {
-            if (this.parentDom && this.wrapper) {
-                this.parentDom.removeChild(this.wrapper);
-                this.wrapper = null;
-            }
-        }
+        // remove(){
+        //     const _this = this;
+        //     if(_this.parentDom && _this.wrapper){
+        //         _this.parentDom.removeChild(_this.wrapper);
+        //         _this.wrapper = null;
+        //     }
+        // }
+
     }, {
         key: 'render',
         value: function render() {
-            var diffDistance = this.diffDistance;
+            var _this = this;
+            var diffDistance = _this.diffDistance;
 
-            if (diffDistance === 0) return;
-            var changeY = this.moveY % 1;
-            this.animateRender();
-            this.effectController.render(diffDistance, changeY);
+            if (diffDistance === 0 && _this.hasRender) return;
+            _this.hasRender = true;
+            var changeY = _this.moveY % 1;
+            _this.animateRender();
+            _this.effectController.render(diffDistance, changeY);
         }
     }], [{
         key: 'floor',
@@ -257,27 +267,24 @@ var NoNumberItem = function (_BaseItem2) {
     _createClass(NoNumberItem, [{
         key: 'mount',
         value: function mount(dom) {
+            var _this = this;
             var wrapper = document.createElement('div');
             wrapper.className = CLASSNAME_PREFIX;
-            wrapper.innerHTML = this.value;
-            this.wrapper = wrapper;
+            wrapper.innerHTML = _this.value;
+            _this.wrapper = wrapper;
             dom.appendChild(wrapper);
-            return this;
-        }
-    }, {
-        key: 'remove',
-        value: function remove() {
-            if (this.parentDom && this.wrapper) {
-                this.parentDom.removeChild(this.wrapper);
-                this.wrapper = null;
-            }
+            return _this;
         }
     }, {
         key: 'move',
         value: function move(tm, stopFlag) {
-            var transitionTime = this.context.transitionTime;
+            var _this = this;
+            var transitionTime = _this.context.transitionTime;
 
-            this.moveRatio = (transitionTime - tm) / transitionTime;
+            _this.moveRatio = (transitionTime - tm) / transitionTime;
+            if (stopFlag && _this.newBornFlag) {
+                _this.newBornFlag = false;
+            }
         }
     }, {
         key: 'update',

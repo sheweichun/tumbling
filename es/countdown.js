@@ -17,28 +17,28 @@ var Countdown = function (_DomRendable) {
     function Countdown(selector, options) {
         _classCallCheck(this, Countdown);
 
-        var _this = _possibleConstructorReturn(this, (Countdown.__proto__ || Object.getPrototypeOf(Countdown)).call(this, selector, options));
+        var _this2 = _possibleConstructorReturn(this, (Countdown.__proto__ || Object.getPrototypeOf(Countdown)).call(this, selector, options));
 
+        var _this = _this2;
         _this.options = options;
         _this.direction = options.direction || Countdown.ADD;
-        _this.init(_this.value);
-        return _this;
+        _this.init(_this2.value);
+        return _this2;
     }
 
     _createClass(Countdown, [{
         key: 'init',
         value: function init(value) {
-            var _this2 = this;
-
+            var _this = this;
             var valStrArr = (value + '').split('');
             var fragment = document.createDocumentFragment();
             var numberIndex = 0;
-            this.items = valStrArr.map(function (val, index) {
+            _this.items = valStrArr.map(function (val, index) {
                 var isNumber = NUMBER_REG.test(val);
                 var itemValue = isNumber ? parseInt(val) : val;
-                var item = DomItem(_this2, itemValue, merge({}, _this2.options, {
+                var item = DomItem(_this, itemValue, merge({}, _this.options, {
                     index: index,
-                    rawDirection: _this2.direction === Countdown.ADD ? 1 : -1,
+                    rawDirection: _this.direction === Countdown.ADD ? 1 : -1,
                     rawMode: true
                 }), isNumber);
                 if (isNumber) {
@@ -46,29 +46,28 @@ var Countdown = function (_DomRendable) {
                 }
                 return item.mount(fragment);
             });
-            this.dom.appendChild(fragment);
+            _this.dom.appendChild(fragment);
         }
     }, {
         key: 'update',
         value: function update(value) {
-            var _this3 = this;
-
-            if (this.animateId) {
-                window.cancelAnimationFrame(this.animateId);
-                this.animateId = null;
-                this.render(this.transitionTime, true);
+            var _this = this;
+            if (_this.animateId) {
+                window.cancelAnimationFrame(_this.animateId);
+                _this.animateId = null;
+                _this.render(_this.transitionTime, true);
             }
-            if (value !== this.value) {
+            if (value !== _this.value) {
                 var valStrArr = (value + '').split('');
                 valStrArr.forEach(function (val, index) {
-                    var curItem = _this3.items[index];
+                    var curItem = _this.items[index];
                     if (curItem.isNumber) {
                         var updateVal = parseInt(val);
                         curItem.update(updateVal);
                     }
                 });
-                this.animateId = window.requestAnimationFrame(this.animate);
-                this.value = value;
+                _this.animateId = window.requestAnimationFrame(_this.animate);
+                _this.value = value;
             }
         }
     }, {

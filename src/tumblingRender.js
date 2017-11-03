@@ -5,12 +5,13 @@ const CLASSNAME_PREFIX = 'tumbling-wrapper';
 
 class TumblingRender{
     constructor(context,options){
-        this.context = context;
-        this.renderItem = options.renderItem;
-        this.wrapper = null;
-        this.scroller = null;
-        this.firstLi = null;
-        this.secondLi = null;
+        const _this = this;
+        _this.context = context;
+        _this.renderItem = options.renderItem;
+        _this.wrapper = null;
+        _this.scroller = null;
+        _this.firstLi = null;
+        _this.secondLi = null;
     }
     static renderText(el,content){
         let html = '';
@@ -23,32 +24,32 @@ class TumblingRender{
         el.innerHTML = html
     } 
     mount(wrapper){
-        this.wrapper = wrapper;
+        const _this = this;
+        _this.wrapper = wrapper;
         wrapper.className = CLASSNAME_PREFIX;
-        wrapper.innerHTML = `
-            <span class="tumbling-hidden-span">${this.renderItem ? this.renderItem(9) : 9}</span>
-            <ul class="tumbling-scroller">
-                <li>${this.renderItem ? this.renderItem(this.showCurValue) : this.showCurValue}</li>
-                <li></li>
-            </ul>
-        `;
-        this.scroller = wrapper.children[wrapper.children.length - 1];
-        this.firstLi = this.scroller.children[0];
-        this.secondLi = this.scroller.children[1];
+        wrapper.innerHTML = `<span class="tumbling-hidden-span">${_this.renderItem ? _this.renderItem(9) : 9}</span>
+<ul class="tumbling-scroller">
+<li>${_this.renderItem ? _this.renderItem(_this.showCurValue) : _this.showCurValue}</li>
+<li></li>
+</ul>`;
+        _this.scroller = wrapper.children[wrapper.children.length - 1];
+        _this.firstLi = _this.scroller.children[0];
+        _this.secondLi = _this.scroller.children[1];
     }
     render(diffDistance,changeY){
-        const{showNextValue,showCurValue,showPrevValue} = this.context;
+        const _this = this;
+        const{showNextValue,showCurValue,showPrevValue} = _this.context;
         if(diffDistance > 0){
             changeY = (changeY - 1) ;
-            TumblingRender.renderText(this.firstLi,showNextValue);
-            TumblingRender.renderText(this.secondLi,showCurValue);
+            TumblingRender.renderText(_this.firstLi,showNextValue);
+            TumblingRender.renderText(_this.secondLi,showCurValue);
         }else if(diffDistance === 0){
-            TumblingRender.renderText(this.firstLi,showCurValue);
+            TumblingRender.renderText(_this.firstLi,showCurValue);
         }else{
-            TumblingRender.renderText(this.firstLi,showCurValue);
-            TumblingRender.renderText(this.secondLi,showPrevValue);
+            TumblingRender.renderText(_this.firstLi,showCurValue);
+            TumblingRender.renderText(_this.secondLi,showPrevValue);
         }
-        setTransformStyle(this.scroller,`translateY(${changeY * 100}%)`);
+        setTransformStyle(_this.scroller,`translateY(${changeY * 100}%)`);
     }
 }
 

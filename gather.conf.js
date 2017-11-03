@@ -18,9 +18,14 @@ module.exports = {
         babelrc: false,
         presets: [['es2015', { modules: false }], 'stage-0'],
         plugins: [
-          'transform-decorators-legacy'
-        ]
+          'transform-decorators-legacy',
+          ["inferno", {
+              "imports": true,
+              "pragma": ""
+          }]
+        ],
       },
+      babelDev:{},
       contentBase: [
         {
           name: '',

@@ -3,22 +3,25 @@
 import {setTransformStyle} from './util';
 const CLASSNAME_PREFIX = 'tumbling-wrapper';
 
+const FLIP_CONSTANT = 180;
+
 class FlipRender{
     static HORIZONTAL = 1
     static VERTICAL = 2
     constructor(context,options){
-        this.context = context;
+        const _this = this;
+        _this.context = context;
         let rotateDirection = options.rotateDirection || FlipRender.VERTICAL;
         if(rotateDirection === FlipRender.VERTICAL){
-            this.rotateName = 'rotateY'
+            _this.rotateName = 'rotateY'
         }else{
-            this.rotateName = 'rotateX'
+            _this.rotateName = 'rotateX'
         }
-        this.renderItem = options.renderItem;
-        this.wrapper = null;
-        this.scroller = null;
-        this.firstLi = null;
-        this.secondLi = null;
+        _this.renderItem = options.renderItem;
+        _this.wrapper = null;
+        _this.scroller = null;
+        _this.firstLi = null;
+        _this.secondLi = null;
     }
     static renderText(el,content,style){
         let html = '';
@@ -32,32 +35,32 @@ class FlipRender{
         el.innerHTML = html
     } 
     mount(wrapper){
-        const{showCurValue} = this.context;
-        this.wrapper = wrapper;
+        const _this = this;
+        const{showCurValue} = _this.context;
+        _this.wrapper = wrapper;
         wrapper.className = CLASSNAME_PREFIX+' tumblingFlip-wrapper';
-        wrapper.innerHTML = `
-            <span class="tumbling-hidden-span">${this.renderItem ? this.renderItem(9) : 9}</span>
-            <ul class="tumbling-scroller">
-                <li>${this.renderItem ? this.renderItem(showCurValue) : showCurValue}</li>
-                <li></li>
-            </ul>
-        `;
-        this.scroller = wrapper.children[wrapper.children.length - 1];
-        this.firstLi = this.scroller.children[0];
-        this.secondLi = this.scroller.children[1];
+        wrapper.innerHTML = `<span class="tumbling-hidden-span">${_this.renderItem ? _this.renderItem(9) : 9}</span>
+<ul class="tumbling-scroller">
+<li>${_this.renderItem ? _this.renderItem(showCurValue) : showCurValue}</li>
+<li></li>
+</ul>`;
+        _this.scroller = wrapper.children[wrapper.children.length - 1];
+        _this.firstLi = _this.scroller.children[0];
+        _this.secondLi = _this.scroller.children[1];
     }
     getRotateStyle(deg){
         return `${this.rotateName}(${deg}deg)`;
     }
     render(diffDistance,changeY){
+        const _this = this;
         if(diffDistance === 0) return;
         const{showNextValue,showCurValue,showPrevValue} = this.context;
         if(diffDistance > 0){
-            FlipRender.renderText(this.firstLi,showNextValue,this.getRotateStyle(-180 * (1 - changeY)));
-            FlipRender.renderText(this.secondLi,showCurValue,this.getRotateStyle(180 * changeY));
+            FlipRender.renderText(_this.firstLi,showNextValue,_this.getRotateStyle(-FLIP_CONSTANT * (1 - changeY)));
+            FlipRender.renderText(_this.secondLi,showCurValue,_this.getRotateStyle(FLIP_CONSTANT * changeY));
         }else{
-            FlipRender.renderText(this.firstLi,showCurValue,this.getRotateStyle(-180 * changeY));
-            FlipRender.renderText(this.secondLi,showPrevValue,this.getRotateStyle(180 * (1 + changeY)));
+            FlipRender.renderText(_this.firstLi,showCurValue,_this.getRotateStyle(-FLIP_CONSTANT * changeY));
+            FlipRender.renderText(_this.secondLi,showPrevValue,_this.getRotateStyle(FLIP_CONSTANT * (1 + changeY)));
         }
     }
 }

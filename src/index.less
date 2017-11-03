@@ -1,4 +1,8 @@
 
+.tumbling-container{
+    transform: translate3d(0,0,0);
+}
+
 
 .tumbling-wrapper{
     display: inline-block;
@@ -6,6 +10,7 @@
     overflow: hidden;
     vertical-align: top;
     visibility: hidden;
+    // z-index: 99999;
     .tumbling-scroller{
         position:absolute;
         top:0;
@@ -34,6 +39,7 @@
         top: 0;
         left: 0;
         width: 100%;
+        overflow: hidden;
         height: 100%;
     }
 }

@@ -10,20 +10,22 @@ class Countdown extends DomRendable{
     static MINUS = 1
     constructor(selector,options){
         super(selector,options);
-        this.options = options;
-        this.direction = options.direction ||  Countdown.ADD;
-        this.init(this.value);
+        const _this = this;
+        _this.options = options;
+        _this.direction = options.direction ||  Countdown.ADD;
+        _this.init(this.value);
     }
     init(value){
+        const _this = this;
         const valStrArr = (value+'').split('');
         const fragment = document.createDocumentFragment();
         let numberIndex = 0;
-        this.items = valStrArr.map((val,index)=>{
+        _this.items = valStrArr.map((val,index)=>{
             const isNumber = NUMBER_REG.test(val);
             const itemValue = isNumber ? parseInt(val) : val;
-            const item = DomItem(this,itemValue,merge({},this.options,{
+            const item = DomItem(_this,itemValue,merge({},_this.options,{
                 index,
-                rawDirection:this.direction === Countdown.ADD ? 1 : -1,
+                rawDirection:_this.direction === Countdown.ADD ? 1 : -1,
                 rawMode:true
             }),isNumber);
             if(isNumber){
@@ -31,25 +33,26 @@ class Countdown extends DomRendable{
             }
             return item.mount(fragment);
         });
-        this.dom.appendChild(fragment);
+        _this.dom.appendChild(fragment);
     }
     update(value){
-        if(this.animateId){
-            window.cancelAnimationFrame(this.animateId);
-            this.animateId = null;
-            this.render(this.transitionTime,true);
+        const _this = this;
+        if(_this.animateId){
+            window.cancelAnimationFrame(_this.animateId);
+            _this.animateId = null;
+            _this.render(_this.transitionTime,true);
         }
-        if(value !== this.value){
+        if(value !== _this.value){
             const valStrArr = (value+'').split('');
             valStrArr.forEach((val,index)=>{
-                const curItem = this.items[index];
+                const curItem = _this.items[index];
                 if(curItem.isNumber){
                     let updateVal = parseInt(val);
                     curItem.update(updateVal);
                 }
             })
-            this.animateId = window.requestAnimationFrame(this.animate)
-            this.value = value;
+            _this.animateId = window.requestAnimationFrame(_this.animate)
+            _this.value = value;
         }
     }
     render(tm,flag){
