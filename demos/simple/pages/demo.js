@@ -18,27 +18,28 @@ export default class Demo extends Component{
         return <div>
             <div className="demo-head">
                 <h1 className="head-title">Tumbling</h1>
+                <p style="color:#e8e8e8;font-size:14px;">Simple and Powerful Library for Number Changin with zero dependencies</p>
                 <iframe src="https://ghbtns.com/github-btn.html?user=sheweichun&repo=tumbling&type=star&count=false&size=small" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
             </div>
             <div className="demo-container">
                 <ul>
                     <li className="demo-item">
-                        <Link to="example?type=DomScroll&value=9">
-                            <img className="demo-item-thumbnail" src="//img.alicdn.com/tfs/TB1nuMeewMPMeJjy1XdXXasrXXa-1024-640.jpg" />
+                        <Link to="example?type=DomNumberTumbling&value=9">
+                            <div className="demo-item-bg"></div>
                             <h3>数字翻转</h3>
                         </Link>
 
                     </li>
                     <li className="demo-item">
-                        <Link to="example?type=DomCountDown">
-                            <img className="demo-item-thumbnail" src="//img.alicdn.com/tfs/TB1nuMeewMPMeJjy1XdXXasrXXa-1024-640.jpg" />
+                        <Link to="example?type=DomCountdownTumbling">
+                            <div className="demo-item-bg"></div>
                             <h3>倒计时</h3>
                         </Link>
 
                     </li>
                     <li className="demo-item">
-                        <Link to="example?type=DomRaw">
-                            <img className="demo-item-thumbnail" src="//img.alicdn.com/tfs/TB1nuMeewMPMeJjy1XdXXasrXXa-1024-640.jpg" />
+                        <Link to="example?type=DomRawTumbling">
+                            <div className="demo-item-bg"></div>
                             <h3>摇奖</h3>
                         </Link>
                     </li>

@@ -13,7 +13,7 @@ class TumblingEffect{
         _this.firstLi = null;
         _this.secondLi = null;
     }
-    static renderText(el,content){
+    renderText(el,content){
         let html = '';
         if(content != null && content >= 0){
             html =  content+''
@@ -27,7 +27,7 @@ class TumblingEffect{
         const _this = this;
         _this.wrapper = wrapper;
         wrapper.className = CLASSNAME_PREFIX;
-        wrapper.innerHTML = `<span class="tumbling-hidden-span">${_this.renderItem ? _this.renderItem(9) : 9}</span>
+        wrapper.innerHTML = `<span class="tumbling-hidden-span">${_this.renderItem ? _this.renderItem(-1) : 9}</span>
 <ul class="tumbling-scroller">
 <li>${_this.renderItem ? _this.renderItem(_this.showCurValue) : _this.showCurValue}</li>
 <li></li>
@@ -41,13 +41,13 @@ class TumblingEffect{
         const{showNextValue,showCurValue,showPrevValue} = _this.context;
         if(diffDistance > 0){
             changeY = (changeY - 1) ;
-            TumblingEffect.renderText(_this.firstLi,showNextValue);
-            TumblingEffect.renderText(_this.secondLi,showCurValue);
+            _this.renderText(_this.firstLi,showNextValue);
+            _this.renderText(_this.secondLi,showCurValue);
         }else if(diffDistance === 0){
-            TumblingEffect.renderText(_this.firstLi,showCurValue);
+            _this.renderText(_this.firstLi,showCurValue);
         }else{
-            TumblingEffect.renderText(_this.firstLi,showCurValue);
-            TumblingEffect.renderText(_this.secondLi,showPrevValue);
+            _this.renderText(_this.firstLi,showCurValue);
+            _this.renderText(_this.secondLi,showPrevValue);
         }
         setTransformStyle(_this.scroller,`translateY(${changeY * 100}%)`);
     }

@@ -2,16 +2,16 @@ import Inferno from 'inferno';
 import Component from 'inferno-component';
 import Tween from '../../../src/util/tween';
 import Chart from '../components/chart';
-import DomScroll from './domScroll';
-import DomCountDown from './domCountdown';
-import DomRaw from './domRaw';
+import DomNumberTumbling from './domScroll';
+import DomCountdownTumbling from './domCountdown';
+import DomRawTumbling from './domRaw';
 import {Link} from 'inferno-router';
 
 
 const COMPONENT_MAP = {
-    DomScroll,
-    DomCountDown,
-    DomRaw
+    DomNumberTumbling,
+    DomCountdownTumbling,
+    DomRawTumbling
 }
 
 

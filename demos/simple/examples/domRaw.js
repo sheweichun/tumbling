@@ -6,9 +6,12 @@ import Inferno from 'inferno';
 import Component from 'inferno-component';
 import {DomRawTumbling,FlipEffect} from '../../../src/index';
 
+const CHAR_LIST = ['A','B','C','D','E','F','G','H','J','K','L','M','O']
+
 class DomScroll extends Component {
     componentDidUpdate(){
         this.scroller.changeTween(this.props.tween)
+        this.charScroller.changeTween(this.props.tween);
     }
     initRoot=(el)=>{
         
@@ -26,8 +29,32 @@ class DomScroll extends Component {
             this.scroller.start();
         }
     }
+    initCharRoot=(el)=>{
+        if(el && !this.charScroller){
+            this.charScroller = new DomRawTumbling(el,{
+                transitionTime:3000,
+                value:10,  
+                renderItem:(value)=>{
+                    if(value < 0){
+                        return 'D'
+                    }
+                    return CHAR_LIST[value];
+                },
+                onStop:(value)=>{
+                    if(this.realCharValueEl){
+                        this.realCharValueEl.innerHTML = value.join('');
+                    }
+                }
+            });
+            
+            this.charScroller.start();
+        }
+    }
     initRealValue=(el)=>{
         this.realValueEl = el;
+    }
+    initRealCharValue=(el)=>{
+        this.realCharValueEl = el;
     }
     start=()=>{
         if(this.scroller){
@@ -37,6 +64,16 @@ class DomScroll extends Component {
     stop=()=>{
         if(this.scroller){
             this.scroller.stop();
+        }
+    }
+    startChar=()=>{
+        if(this.charScroller){
+            this.charScroller.start()
+        }
+    }
+    stopChar=()=>{
+        if(this.charScroller){
+            this.charScroller.stop();
         }
     }
     initCode=(el)=>{
@@ -64,6 +101,25 @@ class DomScroll extends Component {
                         </div>
                     </div>
                 </div>
+
+                <div className="tumbling-panel">
+                    <div className="tumbling-panel-head">
+                        <h3>实例</h3>
+                        <div style="float:right;">
+                            实际值:<span ref={this.initRealCharValue}></span>
+                        </div>
+                    </div>
+                    <div className="tumbling-panel-body">
+                        <div>
+                            <button onClick={this.startChar}>开始</button>
+                            <button onClick={this.stopChar}>停止</button>
+                        </div>
+                        <div className="tumbling-body-wrapper" style={{fontSize:'48px'}}>
+                            <div ref={this.initCharRoot}></div>
+                        </div>
+                    </div>
+                </div>
+
                 <div className="tumbling-panel">
                     <div className="tumbling-panel-head">
                         <h3>代码</h3>

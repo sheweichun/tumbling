@@ -39,7 +39,7 @@ class FlipEffect{
         const{showCurValue} = _this.context;
         _this.wrapper = wrapper;
         wrapper.className = CLASSNAME_PREFIX+' tumblingFlip-wrapper';
-        wrapper.innerHTML = `<span class="tumbling-hidden-span">${_this.renderItem ? _this.renderItem(9) : 9}</span>
+        wrapper.innerHTML = `<span class="tumbling-hidden-span">${_this.renderItem ? _this.renderItem(-1) : 9}</span>
 <ul class="tumbling-scroller">
 <li>${_this.renderItem ? _this.renderItem(showCurValue) : showCurValue}</li>
 <li></li>

@@ -45,7 +45,6 @@ export default class DomRawScroller extends DomRendable{
         const _this = this;
         _this.value.forEach((itemValue,index)=>{
             const curItem = _this.items[index];
-            // curItem.update(curItem.value + itemValue.step);
             curItem.update(getNewValue(curItem,itemValue));
             curItem.value = curItem.value % curItem.maxValue;
         });
@@ -70,6 +69,7 @@ export default class DomRawScroller extends DomRendable{
     }
     beforeStart(){
         this.stopFlag = false;
+        this.updateItems();
     }
     afterStartComplete(){
         this.updateItems();

@@ -21,7 +21,7 @@ export default class DomRendable{
         _this.value = options.value;
         _this.startedFlag = false;
         _this.transitionTime = options.transitionTime || 300;
-        _this.renderItem = renderItem;   
+        _this.renderItem = renderItem;
         _this.tween = DomRendable.parseTween(tween);                                           
         _this.appearAnimation = appearAnimation;
         _this.animationRender = animationRender;
