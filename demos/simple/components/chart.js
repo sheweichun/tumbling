@@ -88,7 +88,7 @@ export default class TweenChart extends Component{
         
     }
     render(){
-        return <canvas ref={this.initCanvas} id="myChart" width="280" height="280">
+        return <canvas ref={this.initCanvas} id="myChart" width="220" height="220">
         </canvas>
     }
 }

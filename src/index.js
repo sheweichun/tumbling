@@ -3,8 +3,8 @@ import './polyfill';
 
 
 
-export {default as FlipRender} from './flipRender';
-export {default as DomNumberScroller} from './domNumberScroller';
-export {default as DomRawScroller} from './domRawScroller';
-export {default as Countdown} from './countdown';
+export {default as FlipEffect} from './effects/flipEffect';
+export {default as DomNumberTumbling} from './dom/domNumberTumbling';
+export {default as DomRawTumbling} from './dom/domRawTumbling';
+export {default as DomCountdownTumbling} from './dom/domCountdownTumbling';
 // export {default as CanvasNumber} from './canvasNumber';

@@ -47,7 +47,7 @@ export class BaseItem{
     disappear(){
         this.disappearFlag = true;
     }
-    animateRender(){
+    animateRender(stopFlag){
         const _this = this;
         if(!_this.visible){
             _this.wrapper.className += ` ${CLASSNAME_PREFIX}-visible`;
@@ -70,6 +70,9 @@ export class BaseItem{
                 _this.wrapper.style.width = `${_this.wrapperWidth * newRatio}px`;
                 _this.wrapper.style.opacity = newRatio;
             }
+        }
+        if(stopFlag && _this.newBornFlag){
+            _this.newBornFlag = false;
         }
     }
 }
@@ -158,9 +161,6 @@ class NumberItem extends BaseItem{
         const _this = this;
         let distance;
         const {transitionTime} = _this.context;
-        if(stopFlag && _this.newBornFlag){
-            _this.newBornFlag = false;
-        }
         if(_this.diffDistance === 0){
             return
         }
@@ -171,6 +171,7 @@ class NumberItem extends BaseItem{
             distance= _this.context.tween(tm,0,_this.diffDistance,transitionTime);
         }
         // this.moveRatio = (this.diffDistance - Tween.linear(tm,0,this.diffDistance,transitionTime)) / this.diffDistance;
+        
         _this.moveRatio = (transitionTime - tm) / transitionTime;
         _this.moveY = distance;
         if(_this.rawMode){
@@ -186,13 +187,13 @@ class NumberItem extends BaseItem{
     //         _this.wrapper = null;
     //     }
     // }
-    render(){
+    render(flag){
         const _this = this;
         const{diffDistance} = _this;
         if(diffDistance === 0 && _this.hasRender) return;
         _this.hasRender = true;
         let changeY = _this.moveY % 1;
-        _this.animateRender();
+        _this.animateRender(flag);
         _this.effectController.render(diffDistance,changeY)
     }
 }
@@ -221,8 +222,8 @@ class NoNumberItem extends BaseItem{
     update(){
 
     }
-    render(){
-        this.animateRender();
+    render(flag){
+        this.animateRender(flag);
     }
 }
 

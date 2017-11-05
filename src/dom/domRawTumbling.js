@@ -68,14 +68,6 @@ export default class DomRawScroller extends DomRendable{
             _this.animateId = window.requestAnimationFrame(_this.animate);
         }
     }
-    render(tm,flag){
-        this.items.forEach((item,index)=>{
-            if(tm){
-                item.move(tm,flag);
-            }
-            item.render();
-        });
-    }
     beforeStart(){
         this.stopFlag = false;
     }

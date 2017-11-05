@@ -7,7 +7,9 @@
   "directories": {
     "test": "test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "inferno-router": "^3.10.1"
+  },
   "devDependencies": {
     "babel-core": "^6.26.0",
     "babel-plugin-inferno": "^3.3.0",

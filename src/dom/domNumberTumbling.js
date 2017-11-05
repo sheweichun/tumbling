@@ -1,7 +1,7 @@
 
 import DomRendable from './domRendable';
 import DomItem from './domItem';
-import {toThousands,NUMBER_REG} from './util';
+import {toThousands,NUMBER_REG} from '../util';
 
 const merge = Object.assign;
 
@@ -48,7 +48,8 @@ export default class DomNumber extends DomRendable{
         _this.items = domItems;
         _this.dom.appendChild(fragment);
     }
-    update(value){
+    update(value,options){
+        super.update(options);
         const _this = this;
         _this.complete();
         if(value !== _this.value){
@@ -77,13 +78,11 @@ export default class DomNumber extends DomRendable{
                         transformIndex++;
                     }
                     if(i < diffLen){
-                        // console.log('push i');
                         newItems.push(_this.generateDomItem(true,value,i,maxValue,baseRange,true).mount(fragment));
                     }
                     
                     transformIndex++;
                 }
-                // console.log('newItems :',newItems.length);
                 _this.dom.insertBefore(fragment,_this.dom.children[0]);
             }else if(diffLen < 0){
                 for(let i = 0; i < -diffLen; i++){
@@ -133,20 +132,5 @@ export default class DomNumber extends DomRendable{
             valueStr:valueStr,
             transformValueStr:transformValueStr
         }
-    }
-    render(tm,flag){
-        const _this = this;
-        _this.items.forEach((item,index)=>{
-            if(tm){
-                item.move(tm,flag);
-            }
-            item.render();
-        });
-        for(let index in _this.strItems){
-            let curItem = _this.strItems[index];
-            curItem.move(tm,flag);
-            curItem.render();
-        }
-        // ctx.fillText('370911',0,0);
     }
 }

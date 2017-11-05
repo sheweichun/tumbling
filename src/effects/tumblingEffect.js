@@ -1,9 +1,9 @@
 
 
-import {setTransformStyle} from './util';
+import {setTransformStyle} from '../util/index';
 const CLASSNAME_PREFIX = 'tumbling-wrapper';
 
-class TumblingRender{
+class TumblingEffect{
     constructor(context,options){
         const _this = this;
         _this.context = context;
@@ -41,16 +41,16 @@ class TumblingRender{
         const{showNextValue,showCurValue,showPrevValue} = _this.context;
         if(diffDistance > 0){
             changeY = (changeY - 1) ;
-            TumblingRender.renderText(_this.firstLi,showNextValue);
-            TumblingRender.renderText(_this.secondLi,showCurValue);
+            TumblingEffect.renderText(_this.firstLi,showNextValue);
+            TumblingEffect.renderText(_this.secondLi,showCurValue);
         }else if(diffDistance === 0){
-            TumblingRender.renderText(_this.firstLi,showCurValue);
+            TumblingEffect.renderText(_this.firstLi,showCurValue);
         }else{
-            TumblingRender.renderText(_this.firstLi,showCurValue);
-            TumblingRender.renderText(_this.secondLi,showPrevValue);
+            TumblingEffect.renderText(_this.firstLi,showCurValue);
+            TumblingEffect.renderText(_this.secondLi,showPrevValue);
         }
         setTransformStyle(_this.scroller,`translateY(${changeY * 100}%)`);
     }
 }
 
-export default TumblingRender;
+export default TumblingEffect;

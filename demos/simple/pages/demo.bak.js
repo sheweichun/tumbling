@@ -2,12 +2,11 @@
 
 import Inferno from 'inferno';
 import Component from 'inferno-component';
-import Tween from '../../src/tween';
-import Chart from './chart';
-import DomScroll from './domScroll';
-import DomCountDown from './domCountdown';
-import DomRaw from './domRaw';
-import styles from './index.less';
+import Tween from '../../../src/tween';
+import Chart from '../components/chart';
+import DomScroll from '../examples/domScroll';
+import DomCountDown from '../examples/domCountdown';
+import DomRaw from '../examples/domRaw';
 
 
 const TweenKeys = Object.keys(Tween);
@@ -43,12 +42,12 @@ export default class Demo extends Component{
                 <div className="section">
                     <DomScroll value={1}></DomScroll>
                 </div>
-                <div className="section">
+                {/*<div className="section">
                     <DomCountDown></DomCountDown>
                 </div>
                 <div className="section">
                     <DomRaw></DomRaw>
-                </div>
+                    </div>*/}
             </div>
         </div>
     }

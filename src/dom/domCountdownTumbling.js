@@ -2,7 +2,7 @@
 
 import DomRendable from './domRendable';
 import DomItem from './domItem';
-import {NUMBER_REG} from './util';
+import {NUMBER_REG} from '../util/index';
 const merge = Object.assign;
 
 class Countdown extends DomRendable{
@@ -35,7 +35,8 @@ class Countdown extends DomRendable{
         });
         _this.dom.appendChild(fragment);
     }
-    update(value){
+    update(value,options){
+        super.update(options);
         const _this = this;
         if(_this.animateId){
             window.cancelAnimationFrame(_this.animateId);
@@ -54,14 +55,6 @@ class Countdown extends DomRendable{
             _this.animateId = window.requestAnimationFrame(_this.animate)
             _this.value = value;
         }
-    }
-    render(tm,flag){
-        this.items.forEach((item,index)=>{
-            if(tm){
-                item.move(tm,flag);
-            }
-            item.render();
-        });
     }
 }
 

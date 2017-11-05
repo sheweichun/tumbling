@@ -1,0 +1,103 @@
+@import '../mixin.less';
+
+.exmaple-head{
+    background-image: linear-gradient(135deg, #a7bff8 0%, #009bff 100%);
+    color:white;
+    margin: 0;
+    text-align: center;
+    // padding: 12px 0;
+    height: 80px;
+    position: relative;
+    line-height: 80px;
+    h1{
+        margin: 0;
+        font-size: 24px;
+    }
+    .back{
+        position: absolute;
+        left: 20px;
+        top:50%;
+        font-size: 42px;
+        
+        cursor: pointer;
+        transform: translateY(-50%);
+        a{
+            color:white;
+        }
+    }
+}
+.example-body{
+    max-width: 1000px;
+    margin: auto;
+}
+
+
+.stats{
+    & > div{
+        top:80px !important;
+    }
+}
+
+.demo-head{
+    padding: 121px 0 81px 0;
+    margin: 0;
+    text-align: center;
+    background-image: linear-gradient(135deg, #a7bff8 0%, #009bff 100%);
+    iframe{
+        transform: translateX(35%);
+    }
+}
+
+.head-title{
+    // height: 200px;
+    // text-align: center;
+    font-weight: 700;
+    font-size: 3em;
+    color:white;
+}
+
+.demo-container{
+    width: 80%;
+    margin: auto;
+    // transition: all .3s;
+    ul{
+        display: flex;
+        flex-direction: row;
+        justify-content:space-between;
+        flex-wrap: wrap;
+        list-style: none;
+        margin: 80px 0;
+        padding: 0;
+        .demo-item{
+            // background: red;
+            transition: transform .3s;
+            flex: 0 1 28%;
+            padding: 20px;
+            box-shadow: 0 1px 2px 0 rgba(0,0,0,.1);
+            margin-bottom: 24px;
+            // min-width: 200px;
+            box-sizing: border-box;
+            &:hover{
+                transform: translate3d(0,-5%,0);
+                box-shadow: 0 2px 3px 0 rgba(0,0,0,.3);
+            }
+        }
+        .demo-item-thumbnail{
+            width: 100%;
+        }
+        h3{
+            font-size: 100% !important;
+            text-align: center;
+            margin: 16px 0 0;
+        }
+    }
+}
+
+@media screen and (max-width: 750px){
+    
+    .demo-container{
+        ul{
+            flex-direction: column;
+        }
+    }
+}

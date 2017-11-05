@@ -1,18 +1,18 @@
 
 
-import {setTransformStyle} from './util';
+import {setTransformStyle} from '../util/index';
 const CLASSNAME_PREFIX = 'tumbling-wrapper';
 
 const FLIP_CONSTANT = 180;
 
-class FlipRender{
+class FlipEffect{
     static HORIZONTAL = 1
     static VERTICAL = 2
     constructor(context,options){
         const _this = this;
         _this.context = context;
-        let rotateDirection = options.rotateDirection || FlipRender.VERTICAL;
-        if(rotateDirection === FlipRender.VERTICAL){
+        let rotateDirection = options.rotateDirection || FlipEffect.VERTICAL;
+        if(rotateDirection === FlipEffect.VERTICAL){
             _this.rotateName = 'rotateY'
         }else{
             _this.rotateName = 'rotateX'
@@ -56,13 +56,13 @@ class FlipRender{
         if(diffDistance === 0) return;
         const{showNextValue,showCurValue,showPrevValue} = this.context;
         if(diffDistance > 0){
-            FlipRender.renderText(_this.firstLi,showNextValue,_this.getRotateStyle(-FLIP_CONSTANT * (1 - changeY)));
-            FlipRender.renderText(_this.secondLi,showCurValue,_this.getRotateStyle(FLIP_CONSTANT * changeY));
+            FlipEffect.renderText(_this.firstLi,showNextValue,_this.getRotateStyle(-FLIP_CONSTANT * (1 - changeY)));
+            FlipEffect.renderText(_this.secondLi,showCurValue,_this.getRotateStyle(FLIP_CONSTANT * changeY));
         }else{
-            FlipRender.renderText(_this.firstLi,showCurValue,_this.getRotateStyle(-FLIP_CONSTANT * changeY));
-            FlipRender.renderText(_this.secondLi,showPrevValue,_this.getRotateStyle(FLIP_CONSTANT * (1 + changeY)));
+            FlipEffect.renderText(_this.firstLi,showCurValue,_this.getRotateStyle(-FLIP_CONSTANT * changeY));
+            FlipEffect.renderText(_this.secondLi,showPrevValue,_this.getRotateStyle(FLIP_CONSTANT * (1 + changeY)));
         }
     }
 }
 
-export default FlipRender;
+export default FlipEffect;
