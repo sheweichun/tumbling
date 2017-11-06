@@ -35,6 +35,8 @@
 
 ##### new DomNumberTumbling(selector,options)(数值动画类)
 
+<img src="./imgs/DomNumberTumbling.gif"/> 
+
 ```javascript
 import {DomNumberTumbling} from 'tumbling';
 import 'tumbling/index.css';
@@ -47,6 +49,8 @@ setInterval(()=>{
 ```
 
 ##### new DomCountdownTumbling(selector,options)(倒计时动画类)
+
+<img src="./imgs/DomCountdownTumbling.gif"/> 
 
 ```javascript
 import {DomCountdownTumbling,FlipEffect} from 'tumbling';
@@ -62,7 +66,9 @@ setInterval(()=>{
     domCountdownTumbling.update(formatDt(new Date()))
 },1000)
 ```
-##### new DomRawTumbling(selector,options)(无线滚动类)
+##### new DomRawTumbling(selector,options)(无限滚动类)
+
+<img src="./imgs/DomRawTumbling.gif"/> 
 
 ```javascript
 import {DomRawTumbling} from 'tumbling';
@@ -75,6 +81,8 @@ new DomRawTumbling(el,{
     }
 });
 ```
+<h2>selector(Dom选择符)</h2>
+selector -- pass `String | HTMLElement`,可以传dom选择符,也可以直接传入目标dom
 
 <h2>options(配置)</h2>
 
