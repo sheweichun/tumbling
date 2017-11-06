@@ -10,6 +10,7 @@ class Layout extends Component {
         return (
             <div>
                 {this.props.children}
+                <div class="copyright">Made with ♥ by <a href="https://github.com/sheweichun" target="_blank">sheweichun</a>.</p>
             </div>
         );
     }

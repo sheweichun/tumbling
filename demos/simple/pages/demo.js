@@ -18,7 +18,7 @@ export default class Demo extends Component{
         return <div>
             <div className="demo-head">
                 <h1 className="head-title">Tumbling</h1>
-                <p style="color:#e8e8e8;font-size:14px;">Simple and Powerful Library for Number Changin with zero dependencies</p>
+                <p style="color:#e8e8e8;font-size:14px;">Simple and Powerful Library for Number Changing with zero dependencies</p>
                 <iframe src="https://ghbtns.com/github-btn.html?user=sheweichun&repo=tumbling&type=star&count=false&size=small" frameborder="0" scrolling="0" width="160px" height="30px"></iframe>
             </div>
             <div className="demo-container">
