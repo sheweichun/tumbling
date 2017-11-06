@@ -68,7 +68,6 @@ setInterval(()=>{
 ```
 ##### new DomRawTumbling(selector,options)(无限滚动类)
 
-<img src="./imgs/DomRawTumbling.gif"/> 
 
 ```javascript
 import {DomRawTumbling} from 'tumbling';
