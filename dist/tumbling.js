@@ -4,26 +4,17 @@
 	(factory((global.Tumbling = {})));
 }(this, (function (exports) { 'use strict';
 
-var $MANGLE498 = 'exports';
-
-
-
-
-
-function unwrapExports(x) {
+function unwrapExports (x) {
 	return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, 'default') ? x['default'] : x;
 }
 
 function createCommonjsModule(fn, module) {
-	return module = { exports: {} }, fn(module, module[$MANGLE498]), module[$MANGLE498];
+	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
 
 var util = createCommonjsModule(function (module, exports) {
 'use strict';
 
-var $MANGLE537 = 'substring',
-    $MANGLE538 = 'replace',
-    $MANGLE540 = 'style';
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
@@ -35,23 +26,23 @@ function toThousands(num) {
   var numStr = (num || 0).toString();
   var dotIndex = numStr.indexOf('.');
   if (dotIndex >= 0) {
-    var integerStr = numStr[$MANGLE537](0, dotIndex);
-    var floatStr = numStr[$MANGLE537](dotIndex + 1);
+    var integerStr = numStr.substring(0, dotIndex);
+    var floatStr = numStr.substring(dotIndex + 1);
     if (keepFloat) {
-      return integerStr[$MANGLE538](/(\d)(?=(?:\d{3})+$)/g, '$1,') + '.' + floatStr;
+      return integerStr.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,') + '.' + floatStr;
     } else {
-      return integerStr[$MANGLE538](/(\d)(?=(?:\d{3})+$)/g, '$1,');
+      return integerStr.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
     }
   }
-  return numStr[$MANGLE538](/(\d)(?=(?:\d{3})+$)/g, '$1,');
+  return numStr.replace(/(\d)(?=(?:\d{3})+$)/g, '$1,');
 }
 
 function setTransformStyle(el, style) {
-  el[$MANGLE540].transform = style;
-  el[$MANGLE540].webkitTransform = style;
-  el[$MANGLE540].mozTransform = style;
-  el[$MANGLE540].msTransform = style;
-  el[$MANGLE540].oTransform = style;
+  el.style.transform = style;
+  el.style.webkitTransform = style;
+  el.style.mozTransform = style;
+  el.style.msTransform = style;
+  el.style.oTransform = style;
 }
 
 function setTransformByStyle(el, style) {
@@ -63,104 +54,76 @@ var NUMBER_REG = exports.NUMBER_REG = new RegExp("[0-9]");
 
 unwrapExports(util);
 
-var flipRender = createCommonjsModule(function (module, exports) {
+var flipEffect = createCommonjsModule(function (module, exports) {
 'use strict';
 
-var $MANGLE504 = "defineProperty",
-    $MANGLE505 = "length",
-    $MANGLE506 = "enumerable",
-    $MANGLE511 = "context",
-    $MANGLE513 = "VERTICAL",
-    $MANGLE514 = "rotateName",
-    $MANGLE515 = "renderItem",
-    $MANGLE516 = "wrapper",
-    $MANGLE517 = "scroller",
-    $MANGLE518 = "firstLi",
-    $MANGLE519 = "secondLi",
-    $MANGLE520 = "showCurValue",
-    $MANGLE522 = "innerHTML",
-    $MANGLE523 = "children",
-    $MANGLE526 = "renderText",
-    $MANGLE527 = "getRotateStyle";
-Object[$MANGLE504](exports, "__esModule", {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props[$MANGLE505]; i++) {
-            var descriptor = props[i];descriptor[$MANGLE506] = descriptor[$MANGLE506] || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object[$MANGLE504](target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
-}();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 
 
-function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var CLASSNAME_PREFIX = 'tumbling-wrapper';
 
 var FLIP_CONSTANT = 180;
 
-var FlipRender = function () {
-    function FlipRender(context, options) {
-        _classCallCheck(this, FlipRender);
+var FlipEffect = function () {
+    function FlipEffect(context, options) {
+        _classCallCheck(this, FlipEffect);
 
         var _this = this;
-        _this[$MANGLE511] = context;
-        var rotateDirection = options.rotateDirection || FlipRender[$MANGLE513];
-        if (rotateDirection === FlipRender[$MANGLE513]) {
-            _this[$MANGLE514] = 'rotateY';
+        _this.context = context;
+        var rotateDirection = options.rotateDirection || FlipEffect.VERTICAL;
+        if (rotateDirection === FlipEffect.VERTICAL) {
+            _this.rotateName = 'rotateY';
         } else {
-            _this[$MANGLE514] = 'rotateX';
+            _this.rotateName = 'rotateX';
         }
-        _this[$MANGLE515] = options[$MANGLE515];
-        _this[$MANGLE516] = null;
-        _this[$MANGLE517] = null;
-        _this[$MANGLE518] = null;
-        _this[$MANGLE519] = null;
+        _this.renderItem = options.renderItem;
+        _this.wrapper = null;
+        _this.scroller = null;
+        _this.firstLi = null;
+        _this.secondLi = null;
     }
 
-    _createClass(FlipRender, [{
+    _createClass(FlipEffect, [{
         key: 'mount',
         value: function mount(wrapper) {
             var _this = this;
-            var showCurValue = _this[$MANGLE511][$MANGLE520];
+            var showCurValue = _this.context.showCurValue;
 
-            _this[$MANGLE516] = wrapper;
+            _this.wrapper = wrapper;
             wrapper.className = CLASSNAME_PREFIX + ' tumblingFlip-wrapper';
-            wrapper[$MANGLE522] = '<span class="tumbling-hidden-span">' + (_this[$MANGLE515] ? _this[$MANGLE515](9) : 9) + '</span>\n<ul class="tumbling-scroller">\n<li>' + (_this[$MANGLE515] ? _this[$MANGLE515](showCurValue) : showCurValue) + '</li>\n<li></li>\n</ul>';
-            _this[$MANGLE517] = wrapper[$MANGLE523][wrapper[$MANGLE523][$MANGLE505] - 1];
-            _this[$MANGLE518] = _this[$MANGLE517][$MANGLE523][0];
-            _this[$MANGLE519] = _this[$MANGLE517][$MANGLE523][1];
+            wrapper.innerHTML = '<span class="tumbling-hidden-span">' + (_this.renderItem ? _this.renderItem(-1) : 9) + '</span>\n<ul class="tumbling-scroller">\n<li>' + (_this.renderItem ? _this.renderItem(showCurValue) : showCurValue) + '</li>\n<li></li>\n</ul>';
+            _this.scroller = wrapper.children[wrapper.children.length - 1];
+            _this.firstLi = _this.scroller.children[0];
+            _this.secondLi = _this.scroller.children[1];
         }
     }, {
         key: 'getRotateStyle',
         value: function getRotateStyle(deg) {
-            return this[$MANGLE514] + '(' + deg + 'deg)';
+            return this.rotateName + '(' + deg + 'deg)';
         }
     }, {
         key: 'render',
         value: function render(diffDistance, changeY) {
             var _this = this;
             if (diffDistance === 0) return;
-            var _context = this[$MANGLE511],
+            var _context = this.context,
                 showNextValue = _context.showNextValue,
-                showCurValue = _context[$MANGLE520],
+                showCurValue = _context.showCurValue,
                 showPrevValue = _context.showPrevValue;
 
             if (diffDistance > 0) {
-                FlipRender[$MANGLE526](_this[$MANGLE518], showNextValue, _this[$MANGLE527](-FLIP_CONSTANT * (1 - changeY)));
-                FlipRender[$MANGLE526](_this[$MANGLE519], showCurValue, _this[$MANGLE527](FLIP_CONSTANT * changeY));
+                FlipEffect.renderText(_this.firstLi, showNextValue, _this.getRotateStyle(-FLIP_CONSTANT * (1 - changeY)));
+                FlipEffect.renderText(_this.secondLi, showCurValue, _this.getRotateStyle(FLIP_CONSTANT * changeY));
             } else {
-                FlipRender[$MANGLE526](_this[$MANGLE518], showCurValue, _this[$MANGLE527](-FLIP_CONSTANT * changeY));
-                FlipRender[$MANGLE526](_this[$MANGLE519], showPrevValue, _this[$MANGLE527](FLIP_CONSTANT * (1 + changeY)));
+                FlipEffect.renderText(_this.firstLi, showCurValue, _this.getRotateStyle(-FLIP_CONSTANT * changeY));
+                FlipEffect.renderText(_this.secondLi, showPrevValue, _this.getRotateStyle(FLIP_CONSTANT * (1 + changeY)));
             }
         }
     }], [{
@@ -170,38 +133,31 @@ var FlipRender = function () {
             if (content != null && content >= 0) {
                 html = content + '';
             }
-            if (this[$MANGLE515]) {
-                html = this[$MANGLE515](html);
+            if (this.renderItem) {
+                html = this.renderItem(html);
             }
-            (0, util.setTransformStyle)(el, style);
-            el[$MANGLE522] = html;
+            (_index.setTransformStyle)(el, style);
+            el.innerHTML = html;
         }
     }]);
 
-    return FlipRender;
+    return FlipEffect;
 }();
 
-FlipRender.HORIZONTAL = 1;
-FlipRender[$MANGLE513] = 2;
-exports.default = FlipRender;
+FlipEffect.HORIZONTAL = 1;
+FlipEffect.VERTICAL = 2;
+exports.default = FlipEffect;
 });
 
-unwrapExports(flipRender);
+unwrapExports(flipEffect);
 
 var tween = createCommonjsModule(function (module, exports) {
 "use strict";
 
-var $MANGLE633 = "cos",
-    $MANGLE634 = "PI",
-    $MANGLE635 = "sin",
-    $MANGLE636 = "pow",
-    $MANGLE637 = "sqrt",
-    $MANGLE638 = "abs",
-    $MANGLE639 = "asin",
-    $MANGLE640 = "easeOutBounce";
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
+
 
 var Tween = {
   linear: function linear(t, b, c, d) {
@@ -248,60 +204,60 @@ var Tween = {
     return c / 2 * ((t -= 2) * t * t * t * t + 2) + b;
   },
   easeInSine: function easeInSine(t, b, c, d) {
-    return -c * Math[$MANGLE633](t / d * (Math[$MANGLE634] / 2)) + c + b;
+    return -c * Math.cos(t / d * (Math.PI / 2)) + c + b;
   },
   easeOutSine: function easeOutSine(t, b, c, d) {
-    return c * Math[$MANGLE635](t / d * (Math[$MANGLE634] / 2)) + b;
+    return c * Math.sin(t / d * (Math.PI / 2)) + b;
   },
   easeInOutSine: function easeInOutSine(t, b, c, d) {
-    return -c / 2 * (Math[$MANGLE633](Math[$MANGLE634] * t / d) - 1) + b;
+    return -c / 2 * (Math.cos(Math.PI * t / d) - 1) + b;
   },
   easeInExpo: function easeInExpo(t, b, c, d) {
-    return t == 0 ? b : c * Math[$MANGLE636](2, 10 * (t / d - 1)) + b;
+    return t == 0 ? b : c * Math.pow(2, 10 * (t / d - 1)) + b;
   },
   easeOutExpo: function easeOutExpo(t, b, c, d) {
-    return t == d ? b + c : c * (-Math[$MANGLE636](2, -10 * t / d) + 1) + b;
+    return t == d ? b + c : c * (-Math.pow(2, -10 * t / d) + 1) + b;
   },
   easeInOutExpo: function easeInOutExpo(t, b, c, d) {
     if (t == 0) return b;
     if (t == d) return b + c;
-    if ((t /= d / 2) < 1) return c / 2 * Math[$MANGLE636](2, 10 * (t - 1)) + b;
-    return c / 2 * (-Math[$MANGLE636](2, -10 * --t) + 2) + b;
+    if ((t /= d / 2) < 1) return c / 2 * Math.pow(2, 10 * (t - 1)) + b;
+    return c / 2 * (-Math.pow(2, -10 * --t) + 2) + b;
   },
   easeInCirc: function easeInCirc(t, b, c, d) {
-    return -c * (Math[$MANGLE637](1 - (t /= d) * t) - 1) + b;
+    return -c * (Math.sqrt(1 - (t /= d) * t) - 1) + b;
   },
   easeOutCirc: function easeOutCirc(t, b, c, d) {
-    return c * Math[$MANGLE637](1 - (t = t / d - 1) * t) + b;
+    return c * Math.sqrt(1 - (t = t / d - 1) * t) + b;
   },
   easeInOutCirc: function easeInOutCirc(t, b, c, d) {
-    if ((t /= d / 2) < 1) return -c / 2 * (Math[$MANGLE637](1 - t * t) - 1) + b;
-    return c / 2 * (Math[$MANGLE637](1 - (t -= 2) * t) + 1) + b;
+    if ((t /= d / 2) < 1) return -c / 2 * (Math.sqrt(1 - t * t) - 1) + b;
+    return c / 2 * (Math.sqrt(1 - (t -= 2) * t) + 1) + b;
   },
   easeInElastic: function easeInElastic(t, b, c, d) {
     var s = 1.70158;var p = 0;var a = c;
     if (t == 0) return b;if ((t /= d) == 1) return b + c;if (!p) p = d * .3;
-    if (a < Math[$MANGLE638](c)) {
+    if (a < Math.abs(c)) {
       a = c;var s = p / 4;
-    } else var s = p / (2 * Math[$MANGLE634]) * Math[$MANGLE639](c / a);
-    return -(a * Math[$MANGLE636](2, 10 * (t -= 1)) * Math[$MANGLE635]((t * d - s) * (2 * Math[$MANGLE634]) / p)) + b;
+    } else var s = p / (2 * Math.PI) * Math.asin(c / a);
+    return -(a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
   },
   easeOutElastic: function easeOutElastic(t, b, c, d) {
     var s = 1.70158;var p = 0;var a = c;
     if (t == 0) return b;if ((t /= d) == 1) return b + c;if (!p) p = d * .3;
-    if (a < Math[$MANGLE638](c)) {
+    if (a < Math.abs(c)) {
       a = c;var s = p / 4;
-    } else var s = p / (2 * Math[$MANGLE634]) * Math[$MANGLE639](c / a);
-    return a * Math[$MANGLE636](2, -10 * t) * Math[$MANGLE635]((t * d - s) * (2 * Math[$MANGLE634]) / p) + c + b;
+    } else var s = p / (2 * Math.PI) * Math.asin(c / a);
+    return a * Math.pow(2, -10 * t) * Math.sin((t * d - s) * (2 * Math.PI) / p) + c + b;
   },
   easeInOutElastic: function easeInOutElastic(t, b, c, d) {
     var s = 1.70158;var p = 0;var a = c;
     if (t == 0) return b;if ((t /= d / 2) == 2) return b + c;if (!p) p = d * (.3 * 1.5);
-    if (a < Math[$MANGLE638](c)) {
+    if (a < Math.abs(c)) {
       a = c;var s = p / 4;
-    } else var s = p / (2 * Math[$MANGLE634]) * Math[$MANGLE639](c / a);
-    if (t < 1) return -.5 * (a * Math[$MANGLE636](2, 10 * (t -= 1)) * Math[$MANGLE635]((t * d - s) * (2 * Math[$MANGLE634]) / p)) + b;
-    return a * Math[$MANGLE636](2, -10 * (t -= 1)) * Math[$MANGLE635]((t * d - s) * (2 * Math[$MANGLE634]) / p) * .5 + c + b;
+    } else var s = p / (2 * Math.PI) * Math.asin(c / a);
+    if (t < 1) return -.5 * (a * Math.pow(2, 10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p)) + b;
+    return a * Math.pow(2, -10 * (t -= 1)) * Math.sin((t * d - s) * (2 * Math.PI) / p) * .5 + c + b;
   },
   easeInBack: function easeInBack(t, b, c, d, s) {
     if (s == undefined) s = 1.70158;
@@ -317,7 +273,7 @@ var Tween = {
     return c / 2 * ((t -= 2) * t * (((s *= 1.525) + 1) * t + s) + 2) + b;
   },
   easeInBounce: function easeInBounce(t, b, c, d) {
-    return c - Tween[$MANGLE640](d - t, 0, c, d) + b;
+    return c - Tween.easeOutBounce(d - t, 0, c, d) + b;
   },
   easeOutBounce: function easeOutBounce(t, b, c, d) {
     if ((t /= d) < 1 / 2.75) {
@@ -332,7 +288,7 @@ var Tween = {
   },
   easeInOutBounce: function easeInOutBounce(t, b, c, d) {
     if (t < d / 2) return Tween.easeInBounce(t * 2, 0, c, d) * .5 + b;
-    return Tween[$MANGLE640](t * 2 - d, 0, c, d) * .5 + c * .5 + b;
+    return Tween.easeOutBounce(t * 2 - d, 0, c, d) * .5 + c * .5 + b;
   }
 };
 
@@ -341,150 +297,96 @@ exports.default = Tween;
 
 unwrapExports(tween);
 
-var tumblingRender = createCommonjsModule(function (module, exports) {
+var tumblingEffect = createCommonjsModule(function (module, exports) {
 'use strict';
 
-var $MANGLE643 = "defineProperty",
-    $MANGLE644 = "length",
-    $MANGLE645 = "enumerable",
-    $MANGLE650 = "context",
-    $MANGLE651 = "renderItem",
-    $MANGLE652 = "wrapper",
-    $MANGLE653 = "scroller",
-    $MANGLE654 = "firstLi",
-    $MANGLE655 = "secondLi",
-    $MANGLE657 = "innerHTML",
-    $MANGLE658 = "showCurValue",
-    $MANGLE659 = "children",
-    $MANGLE662 = "renderText";
-Object[$MANGLE643](exports, "__esModule", {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props[$MANGLE644]; i++) {
-            var descriptor = props[i];descriptor[$MANGLE645] = descriptor[$MANGLE645] || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object[$MANGLE643](target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
-}();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 
 
-function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var CLASSNAME_PREFIX = 'tumbling-wrapper';
 
-var TumblingRender = function () {
-    function TumblingRender(context, options) {
-        _classCallCheck(this, TumblingRender);
+var TumblingEffect = function () {
+    function TumblingEffect(context, options) {
+        _classCallCheck(this, TumblingEffect);
 
         var _this = this;
-        _this[$MANGLE650] = context;
-        _this[$MANGLE651] = options[$MANGLE651];
-        _this[$MANGLE652] = null;
-        _this[$MANGLE653] = null;
-        _this[$MANGLE654] = null;
-        _this[$MANGLE655] = null;
+        _this.context = context;
+        _this.renderItem = options.renderItem;
+        _this.wrapper = null;
+        _this.scroller = null;
+        _this.firstLi = null;
+        _this.secondLi = null;
     }
 
-    _createClass(TumblingRender, [{
-        key: 'mount',
-        value: function mount(wrapper) {
-            var _this = this;
-            _this[$MANGLE652] = wrapper;
-            wrapper.className = CLASSNAME_PREFIX;
-            wrapper[$MANGLE657] = '<span class="tumbling-hidden-span">' + (_this[$MANGLE651] ? _this[$MANGLE651](9) : 9) + '</span>\n<ul class="tumbling-scroller">\n<li>' + (_this[$MANGLE651] ? _this[$MANGLE651](_this[$MANGLE658]) : _this[$MANGLE658]) + '</li>\n<li></li>\n</ul>';
-            _this[$MANGLE653] = wrapper[$MANGLE659][wrapper[$MANGLE659][$MANGLE644] - 1];
-            _this[$MANGLE654] = _this[$MANGLE653][$MANGLE659][0];
-            _this[$MANGLE655] = _this[$MANGLE653][$MANGLE659][1];
-        }
-    }, {
-        key: 'render',
-        value: function render(diffDistance, changeY) {
-            var _this = this;
-            var _this$context = _this[$MANGLE650],
-                showNextValue = _this$context.showNextValue,
-                showCurValue = _this$context[$MANGLE658],
-                showPrevValue = _this$context.showPrevValue;
-
-            if (diffDistance > 0) {
-                changeY = changeY - 1;
-                TumblingRender[$MANGLE662](_this[$MANGLE654], showNextValue);
-                TumblingRender[$MANGLE662](_this[$MANGLE655], showCurValue);
-            } else if (diffDistance === 0) {
-                TumblingRender[$MANGLE662](_this[$MANGLE654], showCurValue);
-            } else {
-                TumblingRender[$MANGLE662](_this[$MANGLE654], showCurValue);
-                TumblingRender[$MANGLE662](_this[$MANGLE655], showPrevValue);
-            }
-            (0, util.setTransformStyle)(_this[$MANGLE653], 'translateY(' + changeY * 100 + '%)');
-        }
-    }], [{
+    _createClass(TumblingEffect, [{
         key: 'renderText',
         value: function renderText(el, content) {
             var html = '';
             if (content != null && content >= 0) {
                 html = content + '';
             }
-            if (this[$MANGLE651]) {
-                html = this[$MANGLE651](html);
+            if (this.renderItem) {
+                html = this.renderItem(html);
             }
-            el[$MANGLE657] = html;
+            el.innerHTML = html;
+        }
+    }, {
+        key: 'mount',
+        value: function mount(wrapper) {
+            var _this = this;
+            _this.wrapper = wrapper;
+            wrapper.className = CLASSNAME_PREFIX;
+            wrapper.innerHTML = '<span class="tumbling-hidden-span">' + (_this.renderItem ? _this.renderItem(-1) : 9) + '</span>\n<ul class="tumbling-scroller">\n<li>' + (_this.renderItem ? _this.renderItem(_this.showCurValue) : _this.showCurValue) + '</li>\n<li></li>\n</ul>';
+            _this.scroller = wrapper.children[wrapper.children.length - 1];
+            _this.firstLi = _this.scroller.children[0];
+            _this.secondLi = _this.scroller.children[1];
+        }
+    }, {
+        key: 'render',
+        value: function render(diffDistance, changeY) {
+            var _this = this;
+            var _this$context = _this.context,
+                showNextValue = _this$context.showNextValue,
+                showCurValue = _this$context.showCurValue,
+                showPrevValue = _this$context.showPrevValue;
+
+            if (diffDistance > 0) {
+                changeY = changeY - 1;
+                _this.renderText(_this.firstLi, showNextValue);
+                _this.renderText(_this.secondLi, showCurValue);
+            } else if (diffDistance === 0) {
+                _this.renderText(_this.firstLi, showCurValue);
+            } else {
+                _this.renderText(_this.firstLi, showCurValue);
+                _this.renderText(_this.secondLi, showPrevValue);
+            }
+            (_index.setTransformStyle)(_this.scroller, 'translateY(' + changeY * 100 + '%)');
         }
     }]);
 
-    return TumblingRender;
+    return TumblingEffect;
 }();
 
-exports.default = TumblingRender;
+exports.default = TumblingEffect;
 });
 
-unwrapExports(tumblingRender);
+unwrapExports(tumblingEffect);
 
 var domRendable = createCommonjsModule(function (module, exports) {
 'use strict';
 
-var $MANGLE597 = "defineProperty",
-    $MANGLE599 = "enumerable",
-    $MANGLE608 = "renderItem",
-    $MANGLE609 = "animationRender",
-    $MANGLE610 = "appearAnimation",
-    $MANGLE611 = "disappearAnimation",
-    $MANGLE612 = "animationFlag",
-    $MANGLE613 = "tween",
-    $MANGLE614 = "effect",
-    $MANGLE615 = "animateTimeStamp",
-    $MANGLE616 = "animateId",
-    $MANGLE617 = "default",
-    $MANGLE618 = "value",
-    $MANGLE620 = "transitionTime",
-    $MANGLE621 = "parseTween",
-    $MANGLE622 = "animate",
-    $MANGLE624 = "requestAnimationFrame",
-    $MANGLE625 = "clear",
-    $MANGLE626 = "render",
-    $MANGLE627 = "animateStop",
-    $MANGLE629 = "beforeStart";
-Object[$MANGLE597](exports, "__esModule", {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];descriptor[$MANGLE599] = descriptor[$MANGLE599] || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object[$MANGLE597](target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor.prototype, protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
-}();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 
 
@@ -492,17 +394,11 @@ var _tween2 = _interopRequireDefault(tween);
 
 
 
-var _tumblingRender2 = _interopRequireDefault(tumblingRender);
+var _tumblingEffect2 = _interopRequireDefault(tumblingEffect);
 
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var merge = Object.assign;
 var DEFAULT_OPTIONS = {
@@ -515,34 +411,59 @@ var DomRendable = function () {
 
         var mergeOptions = merge({}, DEFAULT_OPTIONS, options);
         var _this = this;
-        _this.dom = DomRendable.parseDom(selector);
-        var renderItem = mergeOptions[$MANGLE608],
-            animationRender = mergeOptions[$MANGLE609],
-            appearAnimation = mergeOptions[$MANGLE610],
-            disappearAnimation = mergeOptions[$MANGLE611],
-            animationFlag = mergeOptions[$MANGLE612],
-            tween$$1 = mergeOptions[$MANGLE613],
-            effect = mergeOptions[$MANGLE614];
+        var rootDom = DomRendable.parseDom(selector);
+        _this.rootDom = rootDom;
+        var dom = document.createElement('div');
+        dom.className = 'tumbling-container';
+        rootDom.appendChild(dom);
+        _this.dom = dom;
+        var renderItem = mergeOptions.renderItem,
+            animationRender = mergeOptions.animationRender,
+            autoStart = mergeOptions.autoStart,
+            appearAnimation = mergeOptions.appearAnimation,
+            disappearAnimation = mergeOptions.disappearAnimation,
+            animationFlag = mergeOptions.animationFlag,
+            tween$$1 = mergeOptions.tween,
+            effect = mergeOptions.effect;
 
-        _this[$MANGLE615] = null;
-        _this[$MANGLE616] = null;
-        _this[$MANGLE614] = effect || _tumblingRender2[$MANGLE617];
-        _this[$MANGLE618] = options[$MANGLE618];
+        _this.animateTimeStamp = null;
+        _this.animateId = null;
+        _this.effect = effect || _tumblingEffect2.default;
+        _this.value = options.value;
         _this.startedFlag = false;
-        _this[$MANGLE620] = options[$MANGLE620] || 300;
-        _this[$MANGLE608] = renderItem;
-        _this[$MANGLE613] = DomRendable[$MANGLE621](tween$$1);
-        _this[$MANGLE610] = appearAnimation;
-        _this[$MANGLE609] = animationRender;
-        _this[$MANGLE611] = disappearAnimation;
-        _this[$MANGLE612] = animationFlag;
-        _this[$MANGLE622] = _this[$MANGLE622].bind(_this);
+        _this.transitionTime = options.transitionTime || 300;
+        _this.renderItem = renderItem;
+        _this.tween = DomRendable.parseTween(tween$$1);
+        _this.appearAnimation = appearAnimation;
+        _this.animationRender = animationRender;
+        _this.disappearAnimation = disappearAnimation;
+        _this.animationFlag = animationFlag;
+        _this.items = null;
+        _this.strItems = null;
+        _this.animate = _this.animate.bind(_this);
+        if (autoStart) {
+            this.start();
+        }
     }
 
     _createClass(DomRendable, [{
+        key: 'update',
+        value: function update() {
+            var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+            var transitionTime = options.transitionTime,
+                tween$$1 = options.tween;
+
+            if (transitionTime != null) {
+                this.transitionTime = transitionTime;
+            }
+            if (tween$$1 != null) {
+                this.tween = DomRendable.parseTween(tween$$1);
+            }
+        }
+    }, {
         key: 'changeTween',
         value: function changeTween(tween$$1) {
-            this[$MANGLE613] = DomRendable[$MANGLE621](tween$$1);
+            this.tween = DomRendable.parseTween(tween$$1);
         }
     }, {
         key: 'clear',
@@ -551,63 +472,79 @@ var DomRendable = function () {
         key: 'animate',
         value: function animate(tm) {
             var _this = this;
-            if (_this[$MANGLE615] == null) {
-                _this[$MANGLE615] = tm;
-                window[$MANGLE624](_this[$MANGLE622]);
+            if (_this.animateTimeStamp == null) {
+                _this.animateTimeStamp = tm;
+                window.requestAnimationFrame(_this.animate);
                 return;
             }
-            var diff = tm - _this[$MANGLE615];
+            var diff = tm - _this.animateTimeStamp;
             var stopFlag = false;
-            if (diff >= _this[$MANGLE620]) {
+            if (diff >= _this.transitionTime) {
                 stopFlag = true;
-                diff = _this[$MANGLE620];
-                _this[$MANGLE615] = null;
-                _this[$MANGLE625]();
+                diff = _this.transitionTime;
+                _this.animateTimeStamp = null;
+                _this.clear();
             }
             /**
              * 
              */
-            _this[$MANGLE626](diff, stopFlag);
+            _this.render(diff, stopFlag);
 
             if (stopFlag) {
-                _this[$MANGLE627] && _this[$MANGLE627](tm);
-                _this[$MANGLE616] = null;
+                _this.animateStop && _this.animateStop(tm);
+                _this.animateId = null;
                 return;
             }
-            _this[$MANGLE616] = window[$MANGLE624](_this[$MANGLE622]);
+            _this.animateId = window.requestAnimationFrame(_this.animate);
         }
     }, {
         key: 'complete',
         value: function complete() {
             var _this = this;
-            if (_this[$MANGLE616]) {
-                window.cancelAnimationFrame(_this[$MANGLE616]);
-                _this[$MANGLE616] = null;
-                _this[$MANGLE625]();
-                _this[$MANGLE626](_this[$MANGLE620], true);
+            if (_this.animateId) {
+                window.cancelAnimationFrame(_this.animateId);
+                _this.animateId = null;
+                _this.clear();
+                _this.render(_this.transitionTime, true);
             }
         }
     }, {
         key: 'render',
-        value: function render() {}
+        value: function render(tm, flag) {
+            var _this = this;
+            if (_this.items) {
+                _this.items.forEach(function (item, index) {
+                    if (tm) {
+                        item.move(tm, flag);
+                    }
+                    item.render(flag);
+                });
+            }
+            if (_this.strItems) {
+                for (var index in _this.strItems) {
+                    var curItem = _this.strItems[index];
+                    curItem.move(tm, flag);
+                    curItem.render(flag);
+                }
+            }
+        }
     }, {
         key: 'start',
         value: function start() {
-            var _this = this;
-            if (_this[$MANGLE616]) {
-                return;
-            }
-            _this[$MANGLE629] && _this[$MANGLE629]();
-            // if(!_this.startedFlag){
-            //     _this.startedFlag = true
-            // }else{
-            //     _this.complete();
-            //     _this.afterStartComplete && _this.afterStartComplete();
-            // }
-            if (_this[$MANGLE618]) {
-                // console.log('request');
-                _this[$MANGLE616] = window[$MANGLE624](_this[$MANGLE622]);
-            }
+            var _this2 = this;
+
+            var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+            setTimeout(function () {
+                var _this = _this2;
+                if (_this.animateId) {
+                    return;
+                }
+                _this.beforeStart && _this.beforeStart();
+                if (_this.value) {
+                    _this.animateId = window.requestAnimationFrame(_this.animate);
+                }
+            }, delay);
         }
     }], [{
         key: 'parseDom',
@@ -621,19 +558,19 @@ var DomRendable = function () {
         key: 'parseTween',
         value: function parseTween(tween$$1) {
             if (!tween$$1) {
-                return _tween2[$MANGLE617].linear;
+                return _tween2.default.linear;
             }
             if (typeof tween$$1 === 'function') {
                 return tween$$1;
             }
-            return _tween2[$MANGLE617][tween$$1];
+            return _tween2.default[tween$$1];
         }
     }]);
 
     return DomRendable;
 }();
 
-exports[$MANGLE617] = DomRendable;
+exports.default = DomRendable;
 });
 
 unwrapExports(domRendable);
@@ -641,82 +578,17 @@ unwrapExports(domRendable);
 var domItem = createCommonjsModule(function (module, exports) {
 'use strict';
 
-var $MANGLE665 = "defineProperty",
-    $MANGLE666 = "length",
-    $MANGLE667 = "enumerable",
-    $MANGLE671 = "prototype",
-    $MANGLE673 = "setPrototypeOf",
-    $MANGLE674 = "__proto__",
-    $MANGLE677 = "appearAnimation",
-    $MANGLE678 = "disappearAnimation",
-    $MANGLE679 = "animationFlag",
-    $MANGLE681 = "renderItem",
-    $MANGLE682 = "tween",
-    $MANGLE683 = "context",
-    $MANGLE684 = "value",
-    $MANGLE685 = "index",
-    $MANGLE686 = "rawMode",
-    $MANGLE687 = "rawDirection",
-    $MANGLE688 = "visible",
-    $MANGLE689 = "wrapper",
-    $MANGLE690 = "hasRender",
-    $MANGLE691 = "effectController",
-    $MANGLE692 = "moveRatio",
-    $MANGLE693 = "parentDom",
-    $MANGLE694 = "newBornFlag",
-    $MANGLE695 = "disappearFlag",
-    $MANGLE697 = "wrapperWidth",
-    $MANGLE699 = "className",
-    $MANGLE701 = "width",
-    $MANGLE702 = "style",
-    $MANGLE703 = "opacity",
-    $MANGLE704 = "call",
-    $MANGLE705 = "getPrototypeOf",
-    $MANGLE707 = "baseRange",
-    $MANGLE708 = "diffDistance",
-    $MANGLE709 = "maxValue",
-    $MANGLE710 = "moveY",
-    $MANGLE711 = "showCurValue",
-    $MANGLE713 = "createElement",
-    $MANGLE715 = "appendChild",
-    $MANGLE716 = "showPrevValue",
-    $MANGLE717 = "showNextValue",
-    $MANGLE718 = "floor",
-    $MANGLE719 = "add",
-    $MANGLE720 = "originCurValue",
-    $MANGLE722 = "transitionTime",
-    $MANGLE725 = "animateRender";
-Object[$MANGLE665](exports, "__esModule", {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props[$MANGLE666]; i++) {
-            var descriptor = props[i];descriptor[$MANGLE667] = descriptor[$MANGLE667] || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object[$MANGLE665](target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor[$MANGLE671], protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
-}();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-function _possibleConstructorReturn(self, call) {
-    if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }return call && (typeof call === "object" || typeof call === "function") ? call : self;
-}
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-    }subClass[$MANGLE671] = Object.create(superClass && superClass[$MANGLE671], { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object[$MANGLE673] ? Object[$MANGLE673](subClass, superClass) : subClass[$MANGLE674] = superClass;
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 var CLASSNAME_PREFIX = 'tumbling-wrapper';
 
@@ -725,80 +597,83 @@ var BaseItem = exports.BaseItem = function () {
         _classCallCheck(this, BaseItem);
 
         var effect = context.effect,
-            appearAnimation = context[$MANGLE677],
-            disappearAnimation = context[$MANGLE678],
-            animationFlag = context[$MANGLE679],
+            appearAnimation = context.appearAnimation,
+            disappearAnimation = context.disappearAnimation,
+            animationFlag = context.animationFlag,
             dom = context.dom,
-            renderItem = context[$MANGLE681];
+            renderItem = context.renderItem;
 
         var _this = this;
-        _this[$MANGLE683] = context;
-        _this[$MANGLE684] = value;
-        _this[$MANGLE685] = options[$MANGLE685];
-        _this[$MANGLE686] = options[$MANGLE686] || false;
-        _this[$MANGLE687] = options[$MANGLE687] || 1;
-        _this[$MANGLE688] = false;
-        _this[$MANGLE689] = null;
-        _this[$MANGLE690] = false;
-        _this[$MANGLE691] = new effect(_this, options);
-        _this[$MANGLE692] = 1;
-        _this[$MANGLE679] = animationFlag || true;
-        _this[$MANGLE693] = dom;
-        _this[$MANGLE681] = renderItem;
-        _this[$MANGLE694] = options[$MANGLE694] || false;
-        _this[$MANGLE677] = appearAnimation;
-        _this[$MANGLE678] = disappearAnimation;
-        _this[$MANGLE695] = false;
+        _this.context = context;
+        _this.value = value;
+        _this.index = options.index;
+        _this.rawMode = options.rawMode || false;
+        _this.rawDirection = options.rawDirection || 1;
+        _this.visible = false;
+        _this.wrapper = null;
+        _this.hasRender = false;
+        _this.effectController = new effect(_this, options);
+        _this.moveRatio = 1;
+        _this.animationFlag = animationFlag || true;
+        _this.parentDom = dom;
+        _this.renderItem = renderItem;
+        _this.newBornFlag = options.newBornFlag || false;
+        _this.appearAnimation = appearAnimation;
+        _this.disappearAnimation = disappearAnimation;
+        _this.disappearFlag = false;
     }
 
     _createClass(BaseItem, [{
         key: 'remove',
         value: function remove() {
             var _this = this;
-            if (_this[$MANGLE693] && _this[$MANGLE689]) {
-                _this[$MANGLE693].removeChild(_this[$MANGLE689]);
-                _this[$MANGLE689] = null;
+            if (_this.parentDom && _this.wrapper) {
+                _this.parentDom.removeChild(_this.wrapper);
+                _this.wrapper = null;
             }
         }
     }, {
         key: 'getWrapperWidth',
         value: function getWrapperWidth() {
             var _this = this;
-            if (!_this[$MANGLE697]) {
-                _this[$MANGLE697] = _this[$MANGLE689].offsetWidth;
-                return _this[$MANGLE697];
+            if (!_this.wrapperWidth) {
+                _this.wrapperWidth = _this.wrapper.offsetWidth;
+                return _this.wrapperWidth;
             }
-            return _this[$MANGLE697];
+            return _this.wrapperWidth;
         }
     }, {
         key: 'disappear',
         value: function disappear() {
-            this[$MANGLE695] = true;
+            this.disappearFlag = true;
         }
     }, {
         key: 'animateRender',
-        value: function animateRender() {
+        value: function animateRender(stopFlag) {
             var _this = this;
-            if (!_this[$MANGLE688]) {
-                _this[$MANGLE689][$MANGLE699] += ' ' + CLASSNAME_PREFIX + '-visible';
-                _this[$MANGLE688] = true;
+            if (!_this.visible) {
+                _this.wrapper.className += ' ' + CLASSNAME_PREFIX + '-visible';
+                _this.visible = true;
                 _this.getWrapperWidth();
             }
-            if (_this[$MANGLE695]) {
-                if (_this[$MANGLE678]) {
-                    _this[$MANGLE678](_this[$MANGLE689], _this[$MANGLE692]);
-                } else if (this[$MANGLE679]) {
-                    _this[$MANGLE689][$MANGLE702][$MANGLE701] = _this[$MANGLE697] * _this[$MANGLE692] + 'px';
-                    _this[$MANGLE689][$MANGLE702][$MANGLE703] = _this[$MANGLE692];
+            if (_this.disappearFlag) {
+                if (_this.disappearAnimation) {
+                    _this.disappearAnimation(_this.wrapper, _this.moveRatio);
+                } else if (this.animationFlag) {
+                    _this.wrapper.style.width = _this.wrapperWidth * _this.moveRatio + 'px';
+                    _this.wrapper.style.opacity = _this.moveRatio;
                 }
-            } else if (_this[$MANGLE694]) {
-                var newRatio = 1 - _this[$MANGLE692];
-                if (_this[$MANGLE677]) {
-                    _this[$MANGLE677](_this[$MANGLE689], newRatio);
-                } else if (this[$MANGLE679]) {
-                    _this[$MANGLE689][$MANGLE702][$MANGLE701] = _this[$MANGLE697] * newRatio + 'px';
-                    _this[$MANGLE689][$MANGLE702][$MANGLE703] = newRatio;
+            } else if (_this.newBornFlag) {
+                var newRatio = 1 - _this.moveRatio;
+                if (_this.appearAnimation) {
+                    _this.appearAnimation(_this.wrapper, newRatio);
+                } else if (this.animationFlag) {
+                    _this.wrapper.style.width = _this.wrapperWidth * newRatio + 'px';
+                    _this.wrapper.style.opacity = newRatio;
                 }
+            }
+            if (stopFlag && _this.newBornFlag) {
+                _this.newBornFlag = false;
             }
         }
     }]);
@@ -812,16 +687,16 @@ var NumberItem = function (_BaseItem) {
     function NumberItem(context, value, options) {
         _classCallCheck(this, NumberItem);
 
-        var _this2 = _possibleConstructorReturn(this, (NumberItem[$MANGLE674] || Object[$MANGLE705](NumberItem))[$MANGLE704](this, context, value, options));
+        var _this2 = _possibleConstructorReturn(this, (NumberItem.__proto__ || Object.getPrototypeOf(NumberItem)).call(this, context, value, options));
 
         var _this = _this2;
-        _this[$MANGLE684] = 0;
+        _this.value = 0;
         _this.isNumber = true;
-        _this[$MANGLE707] = options[$MANGLE707];
-        _this[$MANGLE708] = 0;
-        _this[$MANGLE709] = options[$MANGLE709] || 10;
-        _this[$MANGLE710] = 0;
-        _this[$MANGLE711] = 0;
+        _this.baseRange = options.baseRange;
+        _this.diffDistance = 0;
+        _this.maxValue = options.maxValue || 10;
+        _this.moveY = 0;
+        _this.showCurValue = 0;
         _this.update(value);
         return _this2;
     }
@@ -830,44 +705,44 @@ var NumberItem = function (_BaseItem) {
         key: 'mount',
         value: function mount(dom) {
             var _this = this;
-            var wrapper = document[$MANGLE713]('div');
-            _this[$MANGLE691].mount(wrapper);
-            _this[$MANGLE689] = wrapper;
-            _this[$MANGLE688] = false;
-            dom[$MANGLE715](wrapper);
+            var wrapper = document.createElement('div');
+            _this.effectController.mount(wrapper);
+            _this.wrapper = wrapper;
+            _this.visible = false;
+            dom.appendChild(wrapper);
             return _this;
         }
     }, {
         key: 'update',
         value: function update() {
-            var value = arguments[$MANGLE666] > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+            var value = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
 
             var _this = this;
-            if (_this[$MANGLE686]) {
-                _this[$MANGLE716] = _this[$MANGLE717] = value;
-                if (value === _this[$MANGLE684]) {
-                    _this[$MANGLE708] = 0;
+            if (_this.rawMode) {
+                _this.showPrevValue = _this.showNextValue = value;
+                if (value === _this.value) {
+                    _this.diffDistance = 0;
                     return;
                 }
-                _this[$MANGLE708] = _this[$MANGLE687];
-                _this[$MANGLE684] = value;
+                _this.diffDistance = _this.rawDirection;
+                _this.value = value;
             } else {
-                var dividedValue = NumberItem[$MANGLE718](value / _this[$MANGLE707]);
-                var diff = dividedValue - _this[$MANGLE684];
-                _this[$MANGLE708] = diff;
-                _this[$MANGLE684] = dividedValue;
-                _this[$MANGLE716] = _this[$MANGLE719](_this[$MANGLE711], -1);
-                _this[$MANGLE717] = _this[$MANGLE719](_this[$MANGLE711], 1);
-                _this[$MANGLE720] = _this[$MANGLE711];
+                var dividedValue = NumberItem.floor(value / _this.baseRange);
+                var diff = dividedValue - _this.value;
+                _this.diffDistance = diff;
+                _this.value = dividedValue;
+                _this.showPrevValue = _this.add(_this.showCurValue, -1);
+                _this.showNextValue = _this.add(_this.showCurValue, 1);
+                _this.originCurValue = _this.showCurValue;
             }
         }
     }, {
         key: 'processNumber',
         value: function processNumber(value, diff) {
             var _this = this;
-            var ret = NumberItem[$MANGLE718]((value + diff) % _this[$MANGLE709]);
+            var ret = NumberItem.floor((value + diff) % _this.maxValue);
             if (ret < 0) {
-                return _this[$MANGLE709] + ret;
+                return _this.maxValue + ret;
             }
             return ret;
         }
@@ -876,10 +751,10 @@ var NumberItem = function (_BaseItem) {
         value: function add(value, diff) {
             var _this = this;
             var fValue = value + diff;
-            if (fValue >= _this[$MANGLE709]) {
+            if (fValue >= _this.maxValue) {
                 return 0;
             } else if (fValue < 0) {
-                return _this[$MANGLE709] - 1;
+                return _this.maxValue - 1;
             }
             return fValue;
         }
@@ -887,18 +762,18 @@ var NumberItem = function (_BaseItem) {
         key: 'updateValue',
         value: function updateValue(changeY) {
             var _this = this;
-            var integerDistance = NumberItem[$MANGLE718](changeY);
-            _this[$MANGLE711] = _this.processNumber(_this[$MANGLE720], integerDistance);
-            _this[$MANGLE716] = _this[$MANGLE719](_this[$MANGLE711], -1);
-            _this[$MANGLE717] = _this[$MANGLE719](_this[$MANGLE711], 1);
+            var integerDistance = NumberItem.floor(changeY);
+            _this.showCurValue = _this.processNumber(_this.originCurValue, integerDistance);
+            _this.showPrevValue = _this.add(_this.showCurValue, -1);
+            _this.showNextValue = _this.add(_this.showCurValue, 1);
         }
     }, {
         key: 'updateRawValue',
         value: function updateRawValue(changeY) {
             var _this = this;
             if (changeY === 1 || changeY === -1) {
-                _this[$MANGLE711] = _this[$MANGLE716];
-                _this[$MANGLE716] = _this[$MANGLE717] = _this[$MANGLE711];
+                _this.showCurValue = _this.showPrevValue;
+                _this.showPrevValue = _this.showNextValue = _this.showCurValue;
             }
         }
     }, {
@@ -906,24 +781,22 @@ var NumberItem = function (_BaseItem) {
         value: function move(tm, stopFlag) {
             var _this = this;
             var distance = void 0;
-            var transitionTime = _this[$MANGLE683][$MANGLE722];
+            var transitionTime = _this.context.transitionTime;
 
-            if (stopFlag && _this[$MANGLE694]) {
-                _this[$MANGLE694] = false;
-            }
-            if (_this[$MANGLE708] === 0) {
+            if (_this.diffDistance === 0) {
                 return;
             }
             //easeOutElastic linear
             if (tm === transitionTime) {
-                distance = _this[$MANGLE708];
+                distance = _this.diffDistance;
             } else {
-                distance = _this[$MANGLE683][$MANGLE682](tm, 0, _this[$MANGLE708], transitionTime);
+                distance = _this.context.tween(tm, 0, _this.diffDistance, transitionTime);
             }
             // this.moveRatio = (this.diffDistance - Tween.linear(tm,0,this.diffDistance,transitionTime)) / this.diffDistance;
-            _this[$MANGLE692] = (transitionTime - tm) / transitionTime;
-            _this[$MANGLE710] = distance;
-            if (_this[$MANGLE686]) {
+
+            _this.moveRatio = (transitionTime - tm) / transitionTime;
+            _this.moveY = distance;
+            if (_this.rawMode) {
                 _this.updateRawValue(distance);
             } else {
                 _this.updateValue(distance);
@@ -939,23 +812,23 @@ var NumberItem = function (_BaseItem) {
 
     }, {
         key: 'render',
-        value: function render() {
+        value: function render(flag) {
             var _this = this;
-            var diffDistance = _this[$MANGLE708];
+            var diffDistance = _this.diffDistance;
 
-            if (diffDistance === 0 && _this[$MANGLE690]) return;
-            _this[$MANGLE690] = true;
-            var changeY = _this[$MANGLE710] % 1;
-            _this[$MANGLE725]();
-            _this[$MANGLE691].render(diffDistance, changeY);
+            if (diffDistance === 0 && _this.hasRender) return;
+            _this.hasRender = true;
+            var changeY = _this.moveY % 1;
+            _this.animateRender(flag);
+            _this.effectController.render(diffDistance, changeY);
         }
     }], [{
         key: 'floor',
         value: function floor(val) {
             if (val < 0) {
-                return -Math[$MANGLE718](-val);
+                return -Math.floor(-val);
             }
-            return Math[$MANGLE718](val);
+            return Math.floor(val);
         }
     }]);
 
@@ -968,29 +841,29 @@ var NoNumberItem = function (_BaseItem2) {
     function NoNumberItem(context, value, options) {
         _classCallCheck(this, NoNumberItem);
 
-        return _possibleConstructorReturn(this, (NoNumberItem[$MANGLE674] || Object[$MANGLE705](NoNumberItem))[$MANGLE704](this, context, value, options));
+        return _possibleConstructorReturn(this, (NoNumberItem.__proto__ || Object.getPrototypeOf(NoNumberItem)).call(this, context, value, options));
     }
 
     _createClass(NoNumberItem, [{
         key: 'mount',
         value: function mount(dom) {
             var _this = this;
-            var wrapper = document[$MANGLE713]('div');
-            wrapper[$MANGLE699] = CLASSNAME_PREFIX;
-            wrapper.innerHTML = _this[$MANGLE684];
-            _this[$MANGLE689] = wrapper;
-            dom[$MANGLE715](wrapper);
+            var wrapper = document.createElement('div');
+            wrapper.className = CLASSNAME_PREFIX;
+            wrapper.innerHTML = _this.value;
+            _this.wrapper = wrapper;
+            dom.appendChild(wrapper);
             return _this;
         }
     }, {
         key: 'move',
         value: function move(tm, stopFlag) {
             var _this = this;
-            var transitionTime = _this[$MANGLE683][$MANGLE722];
+            var transitionTime = _this.context.transitionTime;
 
-            _this[$MANGLE692] = (transitionTime - tm) / transitionTime;
-            if (stopFlag && _this[$MANGLE694]) {
-                _this[$MANGLE694] = false;
+            _this.moveRatio = (transitionTime - tm) / transitionTime;
+            if (stopFlag && _this.newBornFlag) {
+                _this.newBornFlag = false;
             }
         }
     }, {
@@ -998,8 +871,8 @@ var NoNumberItem = function (_BaseItem2) {
         value: function update() {}
     }, {
         key: 'render',
-        value: function render() {
-            this[$MANGLE725]();
+        value: function render(flag) {
+            this.animateRender(flag);
         }
     }]);
 
@@ -1016,52 +889,16 @@ exports.default = function (context, value, options, flag) {
 
 unwrapExports(domItem);
 
-var domNumberScroller = createCommonjsModule(function (module, exports) {
+var domNumberTumbling = createCommonjsModule(function (module, exports) {
 'use strict';
 
-var $MANGLE546 = "defineProperty",
-    $MANGLE547 = "length",
-    $MANGLE548 = "enumerable",
-    $MANGLE552 = "prototype",
-    $MANGLE555 = "setPrototypeOf",
-    $MANGLE556 = "__proto__",
-    $MANGLE560 = "thousand",
-    $MANGLE562 = "options",
-    $MANGLE564 = "value",
-    $MANGLE565 = "default",
-    $MANGLE566 = "parseValue",
-    $MANGLE567 = "valueStr",
-    $MANGLE568 = "transformValueStr",
-    $MANGLE569 = "createDocumentFragment",
-    $MANGLE570 = "strItems",
-    $MANGLE571 = "forEach",
-    $MANGLE572 = "pow",
-    $MANGLE573 = "test",
-    $MANGLE574 = "NUMBER_REG",
-    $MANGLE575 = "mount",
-    $MANGLE576 = "generateDomItem",
-    $MANGLE577 = "push",
-    $MANGLE578 = "items",
-    $MANGLE580 = "dom",
-    $MANGLE584 = "disappear",
-    $MANGLE591 = "disappearFlag",
-    $MANGLE592 = "remove",
-    $MANGLE593 = "move",
-    $MANGLE594 = "render",
-    $MANGLE595 = "split";
-Object[$MANGLE546](exports, "__esModule", {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props[$MANGLE547]; i++) {
-            var descriptor = props[i];descriptor[$MANGLE548] = descriptor[$MANGLE548] || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object[$MANGLE546](target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor[$MANGLE552], protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
-}();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 
 
@@ -1073,27 +910,13 @@ var _domItem2 = _interopRequireDefault(domItem);
 
 
 
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _possibleConstructorReturn(self, call) {
-    if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }return call && (typeof call === "object" || typeof call === "function") ? call : self;
-}
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-    }subClass[$MANGLE552] = Object.create(superClass && superClass[$MANGLE552], { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object[$MANGLE555] ? Object[$MANGLE555](subClass, superClass) : subClass[$MANGLE556] = superClass;
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var merge = Object.assign;
 
@@ -1103,14 +926,14 @@ var DomNumber = function (_DomRendable) {
     function DomNumber(selector, options) {
         _classCallCheck(this, DomNumber);
 
-        var _this2 = _possibleConstructorReturn(this, (DomNumber[$MANGLE556] || Object.getPrototypeOf(DomNumber)).call(this, selector, options));
+        var _this2 = _possibleConstructorReturn(this, (DomNumber.__proto__ || Object.getPrototypeOf(DomNumber)).call(this, selector, options));
 
-        var thousand = options[$MANGLE560];
+        var thousand = options.thousand;
 
         var _this = _this2;
-        _this[$MANGLE560] = thousand;
-        _this[$MANGLE562] = options;
-        _this.generateNumberItems(_this[$MANGLE564]);
+        _this.thousand = thousand;
+        _this.options = options;
+        _this.generateNumberItems(_this.value);
         return _this2;
     }
 
@@ -1118,7 +941,7 @@ var DomNumber = function (_DomRendable) {
         key: 'generateDomItem',
         value: function generateDomItem(isNumber, val, index, maxValue, baseRange, newBornFlag) {
             var _this = this;
-            return (0, _domItem2[$MANGLE565])(_this, val, merge({}, _this[$MANGLE562], {
+            return (_domItem2.default)(_this, val, merge({}, _this.options, {
                 index: index,
                 newBornFlag: newBornFlag,
                 baseRange: baseRange,
@@ -1128,143 +951,125 @@ var DomNumber = function (_DomRendable) {
     }, {
         key: 'generateNumberItems',
         value: function generateNumberItems() {
-            var val = arguments[$MANGLE547] > 0 && arguments[0] !== undefined ? arguments[0] : '';
+            var val = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : '';
 
             var _this = this;
 
-            var _DomNumber$parseValue = DomNumber[$MANGLE566](val, _this[$MANGLE560]),
-                valueStr = _DomNumber$parseValue[$MANGLE567],
-                transformValueStr = _DomNumber$parseValue[$MANGLE568];
+            var _DomNumber$parseValue = DomNumber.parseValue(val, _this.thousand),
+                valueStr = _DomNumber$parseValue.valueStr,
+                transformValueStr = _DomNumber$parseValue.transformValueStr;
 
-            var valStrLenMinus1 = valueStr[$MANGLE547] - 1;
-            var fragment = document[$MANGLE569]();
-            _this[$MANGLE570] = {};
+            var valStrLenMinus1 = valueStr.length - 1;
+            var fragment = document.createDocumentFragment();
+            _this.strItems = {};
             var transformIndex = 0,
                 domItems = [];
-            valueStr[$MANGLE571](function (value, index) {
+            valueStr.forEach(function (value, index) {
                 var maxValue = 10;
-                var baseRange = Math[$MANGLE572](maxValue, valStrLenMinus1 - index);
+                var baseRange = Math.pow(maxValue, valStrLenMinus1 - index);
                 var transformCurVal = transformValueStr[transformIndex];
-                var isNumber = util[$MANGLE574][$MANGLE573](transformCurVal);
+                var isNumber = util.NUMBER_REG.test(transformCurVal);
                 if (!isNumber) {
-                    var domItem$$1 = _this[$MANGLE576](false, transformCurVal, index, maxValue, baseRange)[$MANGLE575](fragment);
-                    _this[$MANGLE570][valStrLenMinus1 - transformIndex] = domItem$$1;
+                    var domItem$$1 = _this.generateDomItem(false, transformCurVal, index, maxValue, baseRange).mount(fragment);
+                    _this.strItems[valStrLenMinus1 - transformIndex] = domItem$$1;
                     // domItems.push(domItem);
                     transformIndex++;
                 }
                 transformIndex++;
-                domItems[$MANGLE577](_this[$MANGLE576](true, val, index, maxValue, baseRange)[$MANGLE575](fragment));
+                domItems.push(_this.generateDomItem(true, val, index, maxValue, baseRange).mount(fragment));
             });
-            _this[$MANGLE578] = domItems;
-            _this[$MANGLE580].appendChild(fragment);
+            _this.items = domItems;
+            _this.dom.appendChild(fragment);
         }
     }, {
         key: 'update',
-        value: function update(value) {
+        value: function update(value, options) {
+            _get(DomNumber.prototype.__proto__ || Object.getPrototypeOf(DomNumber.prototype), 'update', this).call(this, options);
             var _this = this;
             _this.complete();
-            if (value !== _this[$MANGLE564]) {
-                var _DomNumber$parseValue2 = DomNumber[$MANGLE566](value, _this[$MANGLE560]),
-                    valueStr = _DomNumber$parseValue2[$MANGLE567],
-                    transformValueStr = _DomNumber$parseValue2[$MANGLE568];
+            if (value !== _this.value) {
+                var _DomNumber$parseValue2 = DomNumber.parseValue(value, _this.thousand),
+                    valueStr = _DomNumber$parseValue2.valueStr,
+                    transformValueStr = _DomNumber$parseValue2.transformValueStr;
 
-                var itemsLen = _this[$MANGLE578][$MANGLE547];
-                var valStrLen = valueStr[$MANGLE547];
+                var itemsLen = _this.items.length;
+                var valStrLen = valueStr.length;
 
                 var diffLen = valStrLen - itemsLen;
                 var newItems = void 0;
                 if (diffLen > 0) {
                     newItems = [];
-                    var fragment = document[$MANGLE569]();
+                    var fragment = document.createDocumentFragment();
                     var valStrLenMinus1 = valStrLen - 1;
                     var transformIndex = 0,
                         strIndex = void 0;
                     for (var i = 0; i < valStrLen; i++) {
                         var maxValue = 10;
-                        var baseRange = Math[$MANGLE572](maxValue, valStrLenMinus1 - i);
+                        var baseRange = Math.pow(maxValue, valStrLenMinus1 - i);
                         var transformCurVal = transformValueStr[transformIndex];
-                        var isNumber = util[$MANGLE574][$MANGLE573](transformCurVal);
+                        var isNumber = util.NUMBER_REG.test(transformCurVal);
                         strIndex = valStrLenMinus1 - transformIndex;
                         if (!isNumber) {
-                            if (!_this[$MANGLE570][strIndex]) {
-                                var domItem$$1 = _this[$MANGLE576](false, transformCurVal, i, maxValue, baseRange, true)[$MANGLE575](fragment);
-                                _this[$MANGLE570][strIndex] = domItem$$1;
+                            if (!_this.strItems[strIndex]) {
+                                var domItem$$1 = _this.generateDomItem(false, transformCurVal, i, maxValue, baseRange, true).mount(fragment);
+                                _this.strItems[strIndex] = domItem$$1;
                             }
                             transformIndex++;
                         }
                         if (i < diffLen) {
-                            // console.log('push i');
-                            newItems[$MANGLE577](_this[$MANGLE576](true, value, i, maxValue, baseRange, true)[$MANGLE575](fragment));
+                            newItems.push(_this.generateDomItem(true, value, i, maxValue, baseRange, true).mount(fragment));
                         }
 
                         transformIndex++;
                     }
-                    // console.log('newItems :',newItems.length);
-                    _this[$MANGLE580].insertBefore(fragment, _this[$MANGLE580].children[0]);
+                    _this.dom.insertBefore(fragment, _this.dom.children[0]);
                 } else if (diffLen < 0) {
                     for (var _i = 0; _i < -diffLen; _i++) {
-                        _this[$MANGLE578][_i][$MANGLE584]();
+                        _this.items[_i].disappear();
                     }
-                    for (var index in _this[$MANGLE570]) {
-                        var tmpItem = _this[$MANGLE570][index];
-                        if (util[$MANGLE574][$MANGLE573](transformValueStr[index]) || index >= transformValueStr[$MANGLE547]) {
-                            tmpItem[$MANGLE584]();
+                    for (var index in _this.strItems) {
+                        var tmpItem = _this.strItems[index];
+                        if (util.NUMBER_REG.test(transformValueStr[index]) || index >= transformValueStr.length) {
+                            tmpItem.disappear();
                         }
                     }
                 }
-                _this[$MANGLE578][$MANGLE571](function (item) {
+                _this.items.forEach(function (item) {
                     item.update(value);
                 });
                 if (newItems) {
-                    _this[$MANGLE578] = newItems.concat(_this[$MANGLE578]);
+                    _this.items = newItems.concat(_this.items);
                 }
                 _this.animateId = window.requestAnimationFrame(_this.animate);
-                _this[$MANGLE564] = value;
+                _this.value = value;
             }
         }
     }, {
         key: 'clear',
         value: function clear() {
             var _this = this;
-            _this[$MANGLE578] = _this[$MANGLE578].filter(function (item) {
-                if (item[$MANGLE591]) {
-                    item[$MANGLE592]();
+            _this.items = _this.items.filter(function (item) {
+                if (item.disappearFlag) {
+                    item.remove();
                 }
-                return !item[$MANGLE591];
+                return !item.disappearFlag;
             });
-            for (var index in _this[$MANGLE570]) {
-                var curItem = _this[$MANGLE570][index];
-                if (curItem[$MANGLE591]) {
-                    curItem[$MANGLE592]();
-                    delete _this[$MANGLE570][index];
+            for (var index in _this.strItems) {
+                var curItem = _this.strItems[index];
+                if (curItem.disappearFlag) {
+                    curItem.remove();
+                    delete _this.strItems[index];
                 }
             }
-        }
-    }, {
-        key: 'render',
-        value: function render(tm, flag) {
-            var _this = this;
-            _this[$MANGLE578][$MANGLE571](function (item, index) {
-                if (tm) {
-                    item[$MANGLE593](tm, flag);
-                }
-                item[$MANGLE594]();
-            });
-            for (var index in _this[$MANGLE570]) {
-                var curItem = _this[$MANGLE570][index];
-                curItem[$MANGLE593](tm, flag);
-                curItem[$MANGLE594]();
-            }
-            // ctx.fillText('370911',0,0);
         }
     }], [{
         key: 'parseValue',
         value: function parseValue(val, thousandFlag) {
             var integerVal = parseInt(val);
-            var valueStr = ('' + integerVal)[$MANGLE595](''),
+            var valueStr = ('' + integerVal).split(''),
                 transformValueStr = valueStr;
             if (thousandFlag) {
-                transformValueStr = (0, util.toThousands)(integerVal)[$MANGLE595]('');
+                transformValueStr = (_util.toThousands)(integerVal).split('');
             }
             return {
                 valueStr: valueStr,
@@ -1274,59 +1079,23 @@ var DomNumber = function (_DomRendable) {
     }]);
 
     return DomNumber;
-}(_domRendable2[$MANGLE565]);
+}(_domRendable2.default);
 
-exports[$MANGLE565] = DomNumber;
+exports.default = DomNumber;
 });
 
-unwrapExports(domNumberScroller);
+unwrapExports(domNumberTumbling);
 
-var domRawScroller = createCommonjsModule(function (module, exports) {
+var domRawTumbling = createCommonjsModule(function (module, exports) {
 'use strict';
 
-var $MANGLE729 = "defineProperty",
-    $MANGLE732 = "prototype",
-    $MANGLE734 = "enumerable",
-    $MANGLE740 = "setPrototypeOf",
-    $MANGLE741 = "__proto__",
-    $MANGLE747 = "value",
-    $MANGLE749 = "stopImmediate",
-    $MANGLE750 = "maxRandomStep",
-    $MANGLE751 = "debounceRatio",
-    $MANGLE752 = "stopFlag",
-    $MANGLE753 = "onStop",
-    $MANGLE754 = "options",
-    $MANGLE757 = "items",
-    $MANGLE758 = "map",
-    $MANGLE759 = "step",
-    $MANGLE760 = "floor",
-    $MANGLE763 = "default",
-    $MANGLE764 = "maxValue",
-    $MANGLE768 = "forEach",
-    $MANGLE770 = "updateItems",
-    $MANGLE772 = "animateId",
-    $MANGLE773 = "requestAnimationFrame",
-    $MANGLE774 = "animate",
-    $MANGLE776 = "render";
-Object[$MANGLE729](exports, "__esModule", {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-    return typeof obj;
-} : function (obj) {
-    return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol[$MANGLE732] ? "symbol" : typeof obj;
-};
+var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
 
-var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];descriptor[$MANGLE734] = descriptor[$MANGLE734] || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object[$MANGLE729](target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor[$MANGLE732], protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
-}();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 
 
@@ -1336,27 +1105,13 @@ var _domRendable2 = _interopRequireDefault(domRendable);
 
 var _domItem2 = _interopRequireDefault(domItem);
 
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _possibleConstructorReturn(self, call) {
-    if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }return call && (typeof call === "object" || typeof call === "function") ? call : self;
-}
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-    }subClass[$MANGLE732] = Object.create(superClass && superClass[$MANGLE732], { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object[$MANGLE740] ? Object[$MANGLE740](subClass, superClass) : subClass[$MANGLE741] = superClass;
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var merge = Object.assign;
 
@@ -1366,17 +1121,17 @@ var DomRawScroller = function (_DomRendable) {
     function DomRawScroller(selector, options) {
         _classCallCheck(this, DomRawScroller);
 
-        var _this2 = _possibleConstructorReturn(this, (DomRawScroller[$MANGLE741] || Object.getPrototypeOf(DomRawScroller)).call(this, selector, options));
+        var _this2 = _possibleConstructorReturn(this, (DomRawScroller.__proto__ || Object.getPrototypeOf(DomRawScroller)).call(this, selector, options));
 
         var _this = _this2;
-        _this[$MANGLE747] = DomRawScroller.transformValue(_this[$MANGLE747]);
-        _this[$MANGLE749] = options[$MANGLE749] || false;
-        _this[$MANGLE750] = options[$MANGLE750] || 100;
-        _this[$MANGLE751] = options[$MANGLE751] || 0.3;
-        _this[$MANGLE752] = false;
-        _this[$MANGLE753] = options[$MANGLE753];
-        _this[$MANGLE754] = options;
-        _this.generateRawItems(_this[$MANGLE747]);
+        _this.value = DomRawScroller.transformValue(_this.value);
+        _this.stopImmediate = options.stopImmediate || false;
+        _this.maxRandomStep = options.maxRandomStep || 100;
+        _this.debounceRatio = options.debounceRatio || 0.3;
+        _this.stopFlag = false;
+        _this.onStop = options.onStop;
+        _this.options = options;
+        _this.generateRawItems(_this.value);
         return _this2;
     }
 
@@ -1385,12 +1140,12 @@ var DomRawScroller = function (_DomRendable) {
         value: function generateRawItems(value) {
             var _this = this;
             var fragment = document.createDocumentFragment();
-            _this[$MANGLE757] = value[$MANGLE758](function (itemValue, index) {
-                itemValue[$MANGLE759] = itemValue[$MANGLE759] || Math[$MANGLE760](Math.random() * _this[$MANGLE750]);
-                return (0, _domItem2[$MANGLE763])(_this, itemValue[$MANGLE759], merge({}, _this[$MANGLE754], {
+            _this.items = value.map(function (itemValue, index) {
+                itemValue.step = itemValue.step || Math.floor(Math.random() * _this.maxRandomStep);
+                return (_domItem2.default)(_this, itemValue.step, merge({}, _this.options, {
                     index: index,
                     baseRange: 1,
-                    maxValue: itemValue[$MANGLE764] || 10
+                    maxValue: itemValue.maxValue || 10
                 }), true).mount(fragment);
             });
             _this.dom.appendChild(fragment);
@@ -1400,68 +1155,58 @@ var DomRawScroller = function (_DomRendable) {
         value: function updateItems(getNewValue) {
             getNewValue = getNewValue || DomRawScroller.addValue;
             var _this = this;
-            _this[$MANGLE747][$MANGLE768](function (itemValue, index) {
-                var curItem = _this[$MANGLE757][index];
-                // curItem.update(curItem.value + itemValue.step);
+            _this.value.forEach(function (itemValue, index) {
+                var curItem = _this.items[index];
                 curItem.update(getNewValue(curItem, itemValue));
-                curItem[$MANGLE747] = curItem[$MANGLE747] % curItem[$MANGLE764];
+                curItem.value = curItem.value % curItem.maxValue;
             });
         }
     }, {
         key: 'animateStop',
         value: function animateStop(timestamp) {
             var _this = this;
-            if (_this[$MANGLE752]) {
-                _this[$MANGLE753] && _this[$MANGLE753](_this[$MANGLE757][$MANGLE758](function (item) {
+            if (_this.stopFlag) {
+                _this.onStop && _this.onStop(_this.items.map(function (item) {
                     // console.log(item.showCurValue);
-                    return item[$MANGLE747] % item[$MANGLE764];
+                    return item.value % item.maxValue;
                 }, _this));
                 return;
             }
             if (timestamp) {
-                _this[$MANGLE770]();
+                _this.updateItems();
                 _this.animateTimeStamp = timestamp;
-                _this[$MANGLE772] = window[$MANGLE773](_this[$MANGLE774]);
+                _this.animateId = window.requestAnimationFrame(_this.animate);
             }
-        }
-    }, {
-        key: 'render',
-        value: function render(tm, flag) {
-            this[$MANGLE757][$MANGLE768](function (item, index) {
-                if (tm) {
-                    item.move(tm, flag);
-                }
-                item[$MANGLE776]();
-            });
         }
     }, {
         key: 'beforeStart',
         value: function beforeStart() {
-            this[$MANGLE752] = false;
+            this.stopFlag = false;
+            this.updateItems();
         }
     }, {
         key: 'afterStartComplete',
         value: function afterStartComplete() {
-            this[$MANGLE770]();
+            this.updateItems();
         }
     }, {
         key: 'stop',
         value: function stop() {
             var _this = this;
-            if (_this[$MANGLE752]) return;
-            _this[$MANGLE752] = true;
-            if (_this[$MANGLE772]) {
-                window.cancelAnimationFrame(_this[$MANGLE772]);
-                _this[$MANGLE772] = null;
-                _this[$MANGLE776](_this.transitionTime, true);
-                if (_this[$MANGLE749]) {
+            if (_this.stopFlag) return;
+            _this.stopFlag = true;
+            if (_this.animateId) {
+                window.cancelAnimationFrame(_this.animateId);
+                _this.animateId = null;
+                _this.render(_this.transitionTime, true);
+                if (_this.stopImmediate) {
                     _this.animateStop();
                     return;
                 }
-                _this[$MANGLE770](function (curItem, itemValue) {
-                    return curItem[$MANGLE747] + Math[$MANGLE760](itemValue[$MANGLE759] * _this[$MANGLE751]);
+                _this.updateItems(function (curItem, itemValue) {
+                    return curItem.value + Math.floor(itemValue.step * _this.debounceRatio);
                 });
-                _this[$MANGLE772] = window[$MANGLE773](_this[$MANGLE774]);
+                _this.animateId = window.requestAnimationFrame(_this.animate);
             }
         }
     }], [{
@@ -1479,49 +1224,28 @@ var DomRawScroller = function (_DomRendable) {
     }, {
         key: 'addValue',
         value: function addValue(curItem, itemValue) {
-            return curItem[$MANGLE747] + itemValue[$MANGLE759];
+            return curItem.value + itemValue.step;
         }
     }]);
 
     return DomRawScroller;
-}(_domRendable2[$MANGLE763]);
+}(_domRendable2.default);
 
-exports[$MANGLE763] = DomRawScroller;
+exports.default = DomRawScroller;
 });
 
-unwrapExports(domRawScroller);
+unwrapExports(domRawTumbling);
 
-var countdown = createCommonjsModule(function (module, exports) {
+var domCountdownTumbling = createCommonjsModule(function (module, exports) {
 'use strict';
 
-var $MANGLE781 = "defineProperty",
-    $MANGLE783 = "enumerable",
-    $MANGLE787 = "prototype",
-    $MANGLE790 = "setPrototypeOf",
-    $MANGLE791 = "__proto__",
-    $MANGLE795 = "options",
-    $MANGLE796 = "direction",
-    $MANGLE797 = "ADD",
-    $MANGLE799 = "value",
-    $MANGLE800 = "split",
-    $MANGLE802 = "items",
-    $MANGLE806 = "default",
-    $MANGLE810 = "animateId",
-    $MANGLE812 = "render",
-    $MANGLE814 = "forEach";
-Object[$MANGLE781](exports, "__esModule", {
+Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
-var _createClass = function () {
-    function defineProperties(target, props) {
-        for (var i = 0; i < props.length; i++) {
-            var descriptor = props[i];descriptor[$MANGLE783] = descriptor[$MANGLE783] || false;descriptor.configurable = true;if ("value" in descriptor) descriptor.writable = true;Object[$MANGLE781](target, descriptor.key, descriptor);
-        }
-    }return function (Constructor, protoProps, staticProps) {
-        if (protoProps) defineProperties(Constructor[$MANGLE787], protoProps);if (staticProps) defineProperties(Constructor, staticProps);return Constructor;
-    };
-}();
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 
 
@@ -1533,27 +1257,13 @@ var _domItem2 = _interopRequireDefault(domItem);
 
 
 
-function _interopRequireDefault(obj) {
-    return obj && obj.__esModule ? obj : { default: obj };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function _classCallCheck(instance, Constructor) {
-    if (!(instance instanceof Constructor)) {
-        throw new TypeError("Cannot call a class as a function");
-    }
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-function _possibleConstructorReturn(self, call) {
-    if (!self) {
-        throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-    }return call && (typeof call === "object" || typeof call === "function") ? call : self;
-}
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-function _inherits(subClass, superClass) {
-    if (typeof superClass !== "function" && superClass !== null) {
-        throw new TypeError("Super expression must either be null or a function, not " + typeof superClass);
-    }subClass[$MANGLE787] = Object.create(superClass && superClass[$MANGLE787], { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } });if (superClass) Object[$MANGLE790] ? Object[$MANGLE790](subClass, superClass) : subClass[$MANGLE791] = superClass;
-}
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
 var merge = Object.assign;
 
@@ -1563,12 +1273,12 @@ var Countdown = function (_DomRendable) {
     function Countdown(selector, options) {
         _classCallCheck(this, Countdown);
 
-        var _this2 = _possibleConstructorReturn(this, (Countdown[$MANGLE791] || Object.getPrototypeOf(Countdown)).call(this, selector, options));
+        var _this2 = _possibleConstructorReturn(this, (Countdown.__proto__ || Object.getPrototypeOf(Countdown)).call(this, selector, options));
 
         var _this = _this2;
-        _this[$MANGLE795] = options;
-        _this[$MANGLE796] = options[$MANGLE796] || Countdown[$MANGLE797];
-        _this.init(_this2[$MANGLE799]);
+        _this.options = options;
+        _this.direction = options.direction || Countdown.ADD;
+        _this.init(_this2.value);
         return _this2;
     }
 
@@ -1576,14 +1286,14 @@ var Countdown = function (_DomRendable) {
         key: 'init',
         value: function init(value) {
             var _this = this;
-            var valStrArr = (value + '')[$MANGLE800]('');
+            var valStrArr = (value + '').split('');
             var fragment = document.createDocumentFragment();
-            _this[$MANGLE802] = valStrArr.map(function (val, index) {
+            _this.items = valStrArr.map(function (val, index) {
                 var isNumber = util.NUMBER_REG.test(val);
                 var itemValue = isNumber ? parseInt(val) : val;
-                var item = (0, _domItem2[$MANGLE806])(_this, itemValue, merge({}, _this[$MANGLE795], {
+                var item = (_domItem2.default)(_this, itemValue, merge({}, _this.options, {
                     index: index,
-                    rawDirection: _this[$MANGLE796] === Countdown[$MANGLE797] ? 1 : -1,
+                    rawDirection: _this.direction === Countdown.ADD ? 1 : -1,
                     rawMode: true
                 }), isNumber);
                 return item.mount(fragment);
@@ -1592,47 +1302,38 @@ var Countdown = function (_DomRendable) {
         }
     }, {
         key: 'update',
-        value: function update(value) {
+        value: function update(value, options) {
+            _get(Countdown.prototype.__proto__ || Object.getPrototypeOf(Countdown.prototype), 'update', this).call(this, options);
             var _this = this;
-            if (_this[$MANGLE810]) {
-                window.cancelAnimationFrame(_this[$MANGLE810]);
-                _this[$MANGLE810] = null;
-                _this[$MANGLE812](_this.transitionTime, true);
+            if (_this.animateId) {
+                window.cancelAnimationFrame(_this.animateId);
+                _this.animateId = null;
+                _this.render(_this.transitionTime, true);
             }
-            if (value !== _this[$MANGLE799]) {
-                var valStrArr = (value + '')[$MANGLE800]('');
-                valStrArr[$MANGLE814](function (val, index) {
-                    var curItem = _this[$MANGLE802][index];
+            if (value !== _this.value) {
+                var valStrArr = (value + '').split('');
+                valStrArr.forEach(function (val, index) {
+                    var curItem = _this.items[index];
                     if (curItem.isNumber) {
                         var updateVal = parseInt(val);
                         curItem.update(updateVal);
                     }
                 });
-                _this[$MANGLE810] = window.requestAnimationFrame(_this.animate);
-                _this[$MANGLE799] = value;
+                _this.animateId = window.requestAnimationFrame(_this.animate);
+                _this.value = value;
             }
-        }
-    }, {
-        key: 'render',
-        value: function render(tm, flag) {
-            this[$MANGLE802][$MANGLE814](function (item, index) {
-                if (tm) {
-                    item.move(tm, flag);
-                }
-                item[$MANGLE812]();
-            });
         }
     }]);
 
     return Countdown;
-}(_domRendable2[$MANGLE806]);
+}(_domRendable2.default);
 
-Countdown[$MANGLE797] = 0;
+Countdown.ADD = 0;
 Countdown.MINUS = 1;
-exports[$MANGLE806] = Countdown;
+exports.default = Countdown;
 });
 
-unwrapExports(countdown);
+unwrapExports(domCountdownTumbling);
 
 'use strict';
 
@@ -1676,67 +1377,63 @@ window.requestAnimFrame = function () {
 var lib = createCommonjsModule(function (module, exports) {
 'use strict';
 
-var $MANGLE0 = 'defineProperty',
-    $MANGLE5 = 'default';
-Object[$MANGLE0](exports, "__esModule", {
+Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.Countdown = exports.DomRawScroller = exports.DomNumberScroller = exports.FlipRender = undefined;
+exports.DomCountdownTumbling = exports.DomRawTumbling = exports.DomNumberTumbling = exports.FlipEffect = undefined;
 
 
 
-Object[$MANGLE0](exports, 'FlipRender', {
+Object.defineProperty(exports, 'FlipEffect', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(flipRender)[$MANGLE5];
+    return _interopRequireDefault(flipEffect).default;
   }
 });
 
 
 
-Object[$MANGLE0](exports, 'DomNumberScroller', {
+Object.defineProperty(exports, 'DomNumberTumbling', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(domNumberScroller)[$MANGLE5];
+    return _interopRequireDefault(domNumberTumbling).default;
   }
 });
 
 
 
-Object[$MANGLE0](exports, 'DomRawScroller', {
+Object.defineProperty(exports, 'DomRawTumbling', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(domRawScroller)[$MANGLE5];
+    return _interopRequireDefault(domRawTumbling).default;
   }
 });
 
 
 
-Object[$MANGLE0](exports, 'Countdown', {
+Object.defineProperty(exports, 'DomCountdownTumbling', {
   enumerable: true,
   get: function get() {
-    return _interopRequireDefault(countdown)[$MANGLE5];
+    return _interopRequireDefault(domCountdownTumbling).default;
   }
 });
 
 
 
-function _interopRequireDefault(obj) {
-  return obj && obj.__esModule ? obj : { default: obj };
-}
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 });
 
 var index = unwrapExports(lib);
-var lib_1 = lib.Countdown;
-var lib_2 = lib.DomRawScroller;
-var lib_3 = lib.DomNumberScroller;
-var lib_4 = lib.FlipRender;
+var lib_1 = lib.DomCountdownTumbling;
+var lib_2 = lib.DomRawTumbling;
+var lib_3 = lib.DomNumberTumbling;
+var lib_4 = lib.FlipEffect;
 
 exports['default'] = index;
-exports.Countdown = lib_1;
-exports.DomRawScroller = lib_2;
-exports.DomNumberScroller = lib_3;
-exports.FlipRender = lib_4;
+exports.DomCountdownTumbling = lib_1;
+exports.DomRawTumbling = lib_2;
+exports.DomNumberTumbling = lib_3;
+exports.FlipEffect = lib_4;
 
 Object.defineProperty(exports, '__esModule', { value: true });
 

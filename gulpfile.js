@@ -11,7 +11,7 @@ const resolve = require('rollup-plugin-node-resolve')
 ,commonjs = require('rollup-plugin-commonjs')
 ,plumber = require('gulp-plumber')
 ,path = require('path')
-,manglejs = require('rollup-plugin-manglejs').default
+// ,manglejs = require('rollup-plugin-manglejs').default
 ,uglify = require('rollup-plugin-uglify')
 ,DIR = {
   pwd:'./',
@@ -63,11 +63,11 @@ gulp.task('bundle',  async function() {
     const bundle = await rollup.rollup({
         input: './lib/index.js',
         plugins:[
-            manglejs({
-                parse:{
-                    sourceType:'module'
-                }   
-            }),
+            // manglejs({
+            //     parse:{
+            //         sourceType:'module'
+            //     }   
+            // }),
             commonjs()
         ]
     });
@@ -81,15 +81,15 @@ gulp.task('bundle',  async function() {
 
 gulp.task('bundle:ugly', async function() {
     const bundle = await rollup.rollup({
-        // input: './lib/index.js',
-        input:'./test.js',
+        input: './lib/index.js',
+        // input:'./test.js',
         plugins:[
             commonjs(),
-            manglejs({
-                parse:{
-                    sourceType:'module'
-                }   
-            }),
+            // manglejs({
+            //     parse:{
+            //         sourceType:'module'
+            //     }   
+            // }),
             uglify({
             })
         ]

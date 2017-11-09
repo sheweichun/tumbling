@@ -1,22 +1,6 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-var _domRendable = require('./domRendable');
-
-var _domRendable2 = _interopRequireDefault(_domRendable);
-
-var _domItem = require('./domItem');
-
-var _domItem2 = _interopRequireDefault(_domItem);
-
-var _util = require('./util');
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
@@ -24,6 +8,9 @@ function _possibleConstructorReturn(self, call) { if (!self) { throw new Referen
 
 function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
+import DomRendable from './domRendable';
+import DomItem from './domItem';
+import { NUMBER_REG } from '../util/index';
 var merge = Object.assign;
 
 var Countdown = function (_DomRendable) {
@@ -49,9 +36,9 @@ var Countdown = function (_DomRendable) {
             var fragment = document.createDocumentFragment();
             var numberIndex = 0;
             _this.items = valStrArr.map(function (val, index) {
-                var isNumber = _util.NUMBER_REG.test(val);
+                var isNumber = NUMBER_REG.test(val);
                 var itemValue = isNumber ? parseInt(val) : val;
-                var item = (0, _domItem2.default)(_this, itemValue, merge({}, _this.options, {
+                var item = DomItem(_this, itemValue, merge({}, _this.options, {
                     index: index,
                     rawDirection: _this.direction === Countdown.ADD ? 1 : -1,
                     rawMode: true
@@ -65,7 +52,8 @@ var Countdown = function (_DomRendable) {
         }
     }, {
         key: 'update',
-        value: function update(value) {
+        value: function update(value, options) {
+            _get(Countdown.prototype.__proto__ || Object.getPrototypeOf(Countdown.prototype), 'update', this).call(this, options);
             var _this = this;
             if (_this.animateId) {
                 window.cancelAnimationFrame(_this.animateId);
@@ -85,21 +73,13 @@ var Countdown = function (_DomRendable) {
                 _this.value = value;
             }
         }
-    }, {
-        key: 'render',
-        value: function render(tm, flag) {
-            this.items.forEach(function (item, index) {
-                if (tm) {
-                    item.move(tm, flag);
-                }
-                item.render();
-            });
-        }
     }]);
 
     return Countdown;
-}(_domRendable2.default);
+}(DomRendable);
 
 Countdown.ADD = 0;
 Countdown.MINUS = 1;
-exports.default = Countdown;
+
+
+export default Countdown;

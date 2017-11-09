@@ -1,6 +1,6 @@
 {
   "name": "tumbling",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "lib/index.js",
   "jsnext:main": "es/index.js",
@@ -51,7 +51,9 @@
   },
   "scripts": {
     "test": "ava",
-    "dev":"node config/dev.js"
+    "dev":"node config/dev.js",
+    "build":"gulp build",
+    "prepublish":"gulp build"
   },
   "repository": {
     "type": "git",

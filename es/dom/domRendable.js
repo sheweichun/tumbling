@@ -2,12 +2,12 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-import Tween from './tween';
+import Tween from '../util/tween';
 var merge = Object.assign;
 var DEFAULT_OPTIONS = {
     // transitionTime:300
 };
-import TumblingRender from './tumblingRender';
+import TumblingEffect from '../effects/tumblingEffect';
 
 var DomRendable = function () {
     function DomRendable(selector, options) {
@@ -15,9 +15,15 @@ var DomRendable = function () {
 
         var mergeOptions = merge({}, DEFAULT_OPTIONS, options);
         var _this = this;
-        _this.dom = DomRendable.parseDom(selector);
+        var rootDom = DomRendable.parseDom(selector);
+        _this.rootDom = rootDom;
+        var dom = document.createElement('div');
+        dom.className = 'tumbling-container';
+        rootDom.appendChild(dom);
+        _this.dom = dom;
         var renderItem = mergeOptions.renderItem,
             animationRender = mergeOptions.animationRender,
+            autoStart = mergeOptions.autoStart,
             appearAnimation = mergeOptions.appearAnimation,
             disappearAnimation = mergeOptions.disappearAnimation,
             animationFlag = mergeOptions.animationFlag,
@@ -26,7 +32,7 @@ var DomRendable = function () {
 
         _this.animateTimeStamp = null;
         _this.animateId = null;
-        _this.effect = effect || TumblingRender;
+        _this.effect = effect || TumblingEffect;
         _this.value = options.value;
         _this.startedFlag = false;
         _this.transitionTime = options.transitionTime || 300;
@@ -36,10 +42,29 @@ var DomRendable = function () {
         _this.animationRender = animationRender;
         _this.disappearAnimation = disappearAnimation;
         _this.animationFlag = animationFlag;
+        _this.items = null;
+        _this.strItems = null;
         _this.animate = _this.animate.bind(_this);
+        if (autoStart) {
+            this.start();
+        }
     }
 
     _createClass(DomRendable, [{
+        key: 'update',
+        value: function update() {
+            var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+            var transitionTime = options.transitionTime,
+                tween = options.tween;
+
+            if (transitionTime != null) {
+                this.transitionTime = transitionTime;
+            }
+            if (tween != null) {
+                this.tween = DomRendable.parseTween(tween);
+            }
+        }
+    }, {
         key: 'changeTween',
         value: function changeTween(tween) {
             this.tween = DomRendable.parseTween(tween);
@@ -89,25 +114,41 @@ var DomRendable = function () {
         }
     }, {
         key: 'render',
-        value: function render() {}
+        value: function render(tm, flag) {
+            var _this = this;
+            if (_this.items) {
+                _this.items.forEach(function (item, index) {
+                    if (tm) {
+                        item.move(tm, flag);
+                    }
+                    item.render(flag);
+                });
+            }
+            if (_this.strItems) {
+                for (var index in _this.strItems) {
+                    var curItem = _this.strItems[index];
+                    curItem.move(tm, flag);
+                    curItem.render(flag);
+                }
+            }
+        }
     }, {
         key: 'start',
         value: function start() {
-            var _this = this;
-            if (_this.animateId) {
-                return;
-            }
-            _this.beforeStart && _this.beforeStart();
-            // if(!_this.startedFlag){
-            //     _this.startedFlag = true
-            // }else{
-            //     _this.complete();
-            //     _this.afterStartComplete && _this.afterStartComplete();
-            // }
-            if (_this.value) {
-                // console.log('request');
-                _this.animateId = window.requestAnimationFrame(_this.animate);
-            }
+            var _this2 = this;
+
+            var delay = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : 0;
+
+            setTimeout(function () {
+                var _this = _this2;
+                if (_this.animateId) {
+                    return;
+                }
+                _this.beforeStart && _this.beforeStart();
+                if (_this.value) {
+                    _this.animateId = window.requestAnimationFrame(_this.animate);
+                }
+            }, delay);
         }
     }], [{
         key: 'parseDom',

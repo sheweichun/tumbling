@@ -1,5 +1,7 @@
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+var _get = function get(object, property, receiver) { if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { return get(parent, property, receiver); } } else if ("value" in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } };
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -8,7 +10,7 @@ function _inherits(subClass, superClass) { if (typeof superClass !== "function" 
 
 import DomRendable from './domRendable';
 import DomItem from './domItem';
-import { toThousands, NUMBER_REG } from './util';
+import { toThousands, NUMBER_REG } from '../util';
 
 var merge = Object.assign;
 
@@ -76,7 +78,8 @@ var DomNumber = function (_DomRendable) {
         }
     }, {
         key: 'update',
-        value: function update(value) {
+        value: function update(value, options) {
+            _get(DomNumber.prototype.__proto__ || Object.getPrototypeOf(DomNumber.prototype), 'update', this).call(this, options);
             var _this = this;
             _this.complete();
             if (value !== _this.value) {
@@ -109,13 +112,11 @@ var DomNumber = function (_DomRendable) {
                             transformIndex++;
                         }
                         if (i < diffLen) {
-                            // console.log('push i');
                             newItems.push(_this.generateDomItem(true, value, i, maxValue, baseRange, true).mount(fragment));
                         }
 
                         transformIndex++;
                     }
-                    // console.log('newItems :',newItems.length);
                     _this.dom.insertBefore(fragment, _this.dom.children[0]);
                 } else if (diffLen < 0) {
                     for (var _i = 0; _i < -diffLen; _i++) {
@@ -155,23 +156,6 @@ var DomNumber = function (_DomRendable) {
                     delete _this.strItems[index];
                 }
             }
-        }
-    }, {
-        key: 'render',
-        value: function render(tm, flag) {
-            var _this = this;
-            _this.items.forEach(function (item, index) {
-                if (tm) {
-                    item.move(tm, flag);
-                }
-                item.render();
-            });
-            for (var index in _this.strItems) {
-                var curItem = _this.strItems[index];
-                curItem.move(tm, flag);
-                curItem.render();
-            }
-            // ctx.fillText('370911',0,0);
         }
     }], [{
         key: 'parseValue',

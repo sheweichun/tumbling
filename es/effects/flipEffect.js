@@ -2,19 +2,19 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-import { setTransformStyle } from './util';
+import { setTransformStyle } from '../util/index';
 var CLASSNAME_PREFIX = 'tumbling-wrapper';
 
 var FLIP_CONSTANT = 180;
 
-var FlipRender = function () {
-    function FlipRender(context, options) {
-        _classCallCheck(this, FlipRender);
+var FlipEffect = function () {
+    function FlipEffect(context, options) {
+        _classCallCheck(this, FlipEffect);
 
         var _this = this;
         _this.context = context;
-        var rotateDirection = options.rotateDirection || FlipRender.VERTICAL;
-        if (rotateDirection === FlipRender.VERTICAL) {
+        var rotateDirection = options.rotateDirection || FlipEffect.VERTICAL;
+        if (rotateDirection === FlipEffect.VERTICAL) {
             _this.rotateName = 'rotateY';
         } else {
             _this.rotateName = 'rotateX';
@@ -26,7 +26,7 @@ var FlipRender = function () {
         _this.secondLi = null;
     }
 
-    _createClass(FlipRender, [{
+    _createClass(FlipEffect, [{
         key: 'mount',
         value: function mount(wrapper) {
             var _this = this;
@@ -34,7 +34,7 @@ var FlipRender = function () {
 
             _this.wrapper = wrapper;
             wrapper.className = CLASSNAME_PREFIX + ' tumblingFlip-wrapper';
-            wrapper.innerHTML = '<span class="tumbling-hidden-span">' + (_this.renderItem ? _this.renderItem(9) : 9) + '</span>\n<ul class="tumbling-scroller">\n<li>' + (_this.renderItem ? _this.renderItem(showCurValue) : showCurValue) + '</li>\n<li></li>\n</ul>';
+            wrapper.innerHTML = '<span class="tumbling-hidden-span">' + (_this.renderItem ? _this.renderItem(-1) : 9) + '</span>\n<ul class="tumbling-scroller">\n<li>' + (_this.renderItem ? _this.renderItem(showCurValue) : showCurValue) + '</li>\n<li></li>\n</ul>';
             _this.scroller = wrapper.children[wrapper.children.length - 1];
             _this.firstLi = _this.scroller.children[0];
             _this.secondLi = _this.scroller.children[1];
@@ -55,11 +55,11 @@ var FlipRender = function () {
                 showPrevValue = _context.showPrevValue;
 
             if (diffDistance > 0) {
-                FlipRender.renderText(_this.firstLi, showNextValue, _this.getRotateStyle(-FLIP_CONSTANT * (1 - changeY)));
-                FlipRender.renderText(_this.secondLi, showCurValue, _this.getRotateStyle(FLIP_CONSTANT * changeY));
+                FlipEffect.renderText(_this.firstLi, showNextValue, _this.getRotateStyle(-FLIP_CONSTANT * (1 - changeY)));
+                FlipEffect.renderText(_this.secondLi, showCurValue, _this.getRotateStyle(FLIP_CONSTANT * changeY));
             } else {
-                FlipRender.renderText(_this.firstLi, showCurValue, _this.getRotateStyle(-FLIP_CONSTANT * changeY));
-                FlipRender.renderText(_this.secondLi, showPrevValue, _this.getRotateStyle(FLIP_CONSTANT * (1 + changeY)));
+                FlipEffect.renderText(_this.firstLi, showCurValue, _this.getRotateStyle(-FLIP_CONSTANT * changeY));
+                FlipEffect.renderText(_this.secondLi, showPrevValue, _this.getRotateStyle(FLIP_CONSTANT * (1 + changeY)));
             }
         }
     }], [{
@@ -77,11 +77,11 @@ var FlipRender = function () {
         }
     }]);
 
-    return FlipRender;
+    return FlipEffect;
 }();
 
-FlipRender.HORIZONTAL = 1;
-FlipRender.VERTICAL = 2;
+FlipEffect.HORIZONTAL = 1;
+FlipEffect.VERTICAL = 2;
 
 
-export default FlipRender;
+export default FlipEffect;

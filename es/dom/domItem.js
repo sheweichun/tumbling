@@ -1,9 +1,3 @@
-'use strict';
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
@@ -18,7 +12,7 @@ var NUMBER_REG = new RegExp("[0-9]");
 
 var CLASSNAME_PREFIX = 'tumbling-wrapper';
 
-var BaseItem = exports.BaseItem = function () {
+export var BaseItem = function () {
     function BaseItem(context, value, options) {
         _classCallCheck(this, BaseItem);
 
@@ -76,7 +70,7 @@ var BaseItem = exports.BaseItem = function () {
         }
     }, {
         key: 'animateRender',
-        value: function animateRender() {
+        value: function animateRender(stopFlag) {
             var _this = this;
             if (!_this.visible) {
                 _this.wrapper.className += ' ' + CLASSNAME_PREFIX + '-visible';
@@ -98,6 +92,9 @@ var BaseItem = exports.BaseItem = function () {
                     _this.wrapper.style.width = _this.wrapperWidth * newRatio + 'px';
                     _this.wrapper.style.opacity = newRatio;
                 }
+            }
+            if (stopFlag && _this.newBornFlag) {
+                _this.newBornFlag = false;
             }
         }
     }]);
@@ -207,9 +204,6 @@ var NumberItem = function (_BaseItem) {
             var distance = void 0;
             var transitionTime = _this.context.transitionTime;
 
-            if (stopFlag && _this.newBornFlag) {
-                _this.newBornFlag = false;
-            }
             if (_this.diffDistance === 0) {
                 return;
             }
@@ -220,6 +214,7 @@ var NumberItem = function (_BaseItem) {
                 distance = _this.context.tween(tm, 0, _this.diffDistance, transitionTime);
             }
             // this.moveRatio = (this.diffDistance - Tween.linear(tm,0,this.diffDistance,transitionTime)) / this.diffDistance;
+
             _this.moveRatio = (transitionTime - tm) / transitionTime;
             _this.moveY = distance;
             if (_this.rawMode) {
@@ -238,14 +233,14 @@ var NumberItem = function (_BaseItem) {
 
     }, {
         key: 'render',
-        value: function render() {
+        value: function render(flag) {
             var _this = this;
             var diffDistance = _this.diffDistance;
 
             if (diffDistance === 0 && _this.hasRender) return;
             _this.hasRender = true;
             var changeY = _this.moveY % 1;
-            _this.animateRender();
+            _this.animateRender(flag);
             _this.effectController.render(diffDistance, changeY);
         }
     }], [{
@@ -297,17 +292,17 @@ var NoNumberItem = function (_BaseItem2) {
         value: function update() {}
     }, {
         key: 'render',
-        value: function render() {
-            this.animateRender();
+        value: function render(flag) {
+            this.animateRender(flag);
         }
     }]);
 
     return NoNumberItem;
 }(BaseItem);
 
-exports.default = function (context, value, options, flag) {
+export default (function (context, value, options, flag) {
     if (flag) {
         return new NumberItem(context, value, options);
     }
     return new NoNumberItem(context, value, options);
-};
+});

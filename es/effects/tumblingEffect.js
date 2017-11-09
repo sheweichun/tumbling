@@ -2,12 +2,12 @@ var _createClass = function () { function defineProperties(target, props) { for 
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-import { setTransformStyle } from './util';
+import { setTransformStyle } from '../util/index';
 var CLASSNAME_PREFIX = 'tumbling-wrapper';
 
-var TumblingRender = function () {
-    function TumblingRender(context, options) {
-        _classCallCheck(this, TumblingRender);
+var TumblingEffect = function () {
+    function TumblingEffect(context, options) {
+        _classCallCheck(this, TumblingEffect);
 
         var _this = this;
         _this.context = context;
@@ -18,13 +18,25 @@ var TumblingRender = function () {
         _this.secondLi = null;
     }
 
-    _createClass(TumblingRender, [{
+    _createClass(TumblingEffect, [{
+        key: 'renderText',
+        value: function renderText(el, content) {
+            var html = '';
+            if (content != null && content >= 0) {
+                html = content + '';
+            }
+            if (this.renderItem) {
+                html = this.renderItem(html);
+            }
+            el.innerHTML = html;
+        }
+    }, {
         key: 'mount',
         value: function mount(wrapper) {
             var _this = this;
             _this.wrapper = wrapper;
             wrapper.className = CLASSNAME_PREFIX;
-            wrapper.innerHTML = '<span class="tumbling-hidden-span">' + (_this.renderItem ? _this.renderItem(9) : 9) + '</span>\n<ul class="tumbling-scroller">\n<li>' + (_this.renderItem ? _this.renderItem(_this.showCurValue) : _this.showCurValue) + '</li>\n<li></li>\n</ul>';
+            wrapper.innerHTML = '<span class="tumbling-hidden-span">' + (_this.renderItem ? _this.renderItem(-1) : 9) + '</span>\n<ul class="tumbling-scroller">\n<li>' + (_this.renderItem ? _this.renderItem(_this.showCurValue) : _this.showCurValue) + '</li>\n<li></li>\n</ul>';
             _this.scroller = wrapper.children[wrapper.children.length - 1];
             _this.firstLi = _this.scroller.children[0];
             _this.secondLi = _this.scroller.children[1];
@@ -40,31 +52,19 @@ var TumblingRender = function () {
 
             if (diffDistance > 0) {
                 changeY = changeY - 1;
-                TumblingRender.renderText(_this.firstLi, showNextValue);
-                TumblingRender.renderText(_this.secondLi, showCurValue);
+                _this.renderText(_this.firstLi, showNextValue);
+                _this.renderText(_this.secondLi, showCurValue);
             } else if (diffDistance === 0) {
-                TumblingRender.renderText(_this.firstLi, showCurValue);
+                _this.renderText(_this.firstLi, showCurValue);
             } else {
-                TumblingRender.renderText(_this.firstLi, showCurValue);
-                TumblingRender.renderText(_this.secondLi, showPrevValue);
+                _this.renderText(_this.firstLi, showCurValue);
+                _this.renderText(_this.secondLi, showPrevValue);
             }
             setTransformStyle(_this.scroller, 'translateY(' + changeY * 100 + '%)');
         }
-    }], [{
-        key: 'renderText',
-        value: function renderText(el, content) {
-            var html = '';
-            if (content != null && content >= 0) {
-                html = content + '';
-            }
-            if (this.renderItem) {
-                html = this.renderItem(html);
-            }
-            el.innerHTML = html;
-        }
     }]);
 
-    return TumblingRender;
+    return TumblingEffect;
 }();
 
-export default TumblingRender;
+export default TumblingEffect;
