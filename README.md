@@ -12,9 +12,10 @@
 </div>
 
 ### Contents
-* [安装](#installation)
-* [使用](#usage)
-* [缓动函数](#tween)
+* [安装](#安装)
+* [使用](#使用)
+* [缓动函数](#tween所有的缓动函数)
+* [本地开发](#本地开发)
 
 
 #### 安装
@@ -81,7 +82,7 @@ new DomRawTumbling(el,{
 });
 ```
 <h2>selector(Dom选择符)</h2>
-selector -- pass `String | HTMLElement`,可以传dom选择符,也可以直接传入目标dom
+selector -- pass `String` | `HTMLElement`,可以传dom选择符,也可以直接传入目标dom
 
 <h2>options(配置)</h2>
 
@@ -249,4 +250,12 @@ class AnyEffect{
       return Tween.easeOutBounce( t * 2 - d, 0, c, d) * .5 + c * .5 + b;
     }
 };
+```
+
+
+#### 本地开发
+
+```sh
+npm install
+npm run dev
 ```

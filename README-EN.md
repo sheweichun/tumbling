@@ -11,6 +11,7 @@
 ### Contents
 * [Installation](#installation)
 * [Usage](#usage)
+* [Develop](#develop)
 
 
 #### installation
@@ -46,3 +47,14 @@ setInterval(()=>{
     })
 },3000)
 ```
+...to be continued :smile:
+
+#### develop
+
+```sh
+npm install
+npm run dev
+```
+
+
+ 
