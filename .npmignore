@@ -4,3 +4,5 @@ demos/
 imgs/
 build/
 config/
+.happypack/
+.gather/
